@@ -1,0 +1,37 @@
+{
+  "name": "@africanies/javascript-web-sdk-workspace",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Framework-independent AFRICANIES Web SDK workspace",
+  "license": "MIT",
+  "author": "A.I.E.S",
+  "contributors": [
+    "Ikechukwu",
+    "Chinedu",
+    "Armstrong",
+    "Adebowale",
+    "Muhydeen",
+    "Dotun",
+    "Busola"
+  ],
+  "type": "module",
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "build": "tsc -b && node tools/build-browser.mjs",
+    "artifact:verify": "npm run build --silent && node tools/verify-artifacts.mjs",
+    "clean": "node tools/clean.mjs",
+    "lint": "eslint .",
+    "test": "npm run build --silent && node --test tests/*.test.mjs",
+    "typecheck": "tsc -b --pretty false",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+  },
+  "engines": {"node": ">=20"},
+  "devDependencies": {
+    "@eslint/js": "^9.34.0",
+    "esbuild": "^0.25.9",
+    "eslint": "^9.34.0",
+    "globals": "^16.3.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.41.0"
+  }
+}

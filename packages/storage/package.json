@@ -1,0 +1,1 @@
+{"name":"@africanies/africanies-storage","version":"0.0.0","description":"Browser-safe AFRICANIES storage adapters","type":"module","license":"MIT","sideEffects":false,"files":["dist","README.md","LICENSE"],"exports":{".":{"types":"./dist/index.d.ts","import":"./dist/index.js"}},"scripts":{"build":"tsc -b"}}

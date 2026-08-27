@@ -1,0 +1,12 @@
+{
+  "files": [],
+  "references": [
+    {"path": "packages/models"},
+    {"path": "packages/storage"},
+    {"path": "packages/core"},
+    {"path": "packages/theme"},
+    {"path": "packages/icons"},
+    {"path": "packages/ui"},
+    {"path": "packages/sdk"}
+  ]
+}

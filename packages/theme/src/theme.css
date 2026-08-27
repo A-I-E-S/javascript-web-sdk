@@ -1,0 +1,26 @@
+:root {
+  color-scheme: light;
+  --africanies-export: #1cbd5d;
+  --africanies-export-light: #24dc6d;
+  --africanies-export-subtle: #e4fff3;
+  --africanies-import: #f08829;
+  --africanies-import-light: #ffa95b;
+  --africanies-import-subtle: #fffcef;
+}
+:root.dark { color-scheme: dark; }
+.text-export { color: var(--africanies-export); }
+.bg-export { background-color: var(--africanies-export); }
+.bg-export-subtle { background-color: var(--africanies-export-subtle); }
+.bg-export-light, .hover\:bg-export-light:hover { background-color: var(--africanies-export-light); }
+.hover\:bg-export-subtle:hover { background-color: var(--africanies-export-subtle); }
+.border-export { border-color: var(--africanies-export); }
+.text-import { color: var(--africanies-import); }
+.bg-import { background-color: var(--africanies-import); }
+.bg-import-subtle { background-color: var(--africanies-import-subtle); }
+.bg-import-light, .hover\:bg-import-light:hover { background-color: var(--africanies-import-light); }
+.hover\:bg-import-subtle:hover { background-color: var(--africanies-import-subtle); }
+.border-import { border-color: var(--africanies-import); }
+.dark .dark\:bg-export\/15 { background-color: color-mix(in srgb, var(--africanies-export) 15%, transparent); }
+.dark .dark\:hover\:bg-export\/15:hover { background-color: color-mix(in srgb, var(--africanies-export) 15%, transparent); }
+.dark .dark\:bg-import\/15 { background-color: color-mix(in srgb, var(--africanies-import) 15%, transparent); }
+.dark .dark\:hover\:bg-import\/15:hover { background-color: color-mix(in srgb, var(--africanies-import) 15%, transparent); }
