@@ -6,13 +6,34 @@
   "license": "MIT",
   "author": "A.I.E.S",
   "contributors": [
-    "Ikechukwu",
-    "Chinedu",
-    "Armstrong",
-    "Adebowale",
-    "Muhydeen",
-    "Dotun",
-    "Busola"
+    {
+      "name": "Ikechukwu",
+      "url": "https://github.com/ikechukwukalu"
+    },
+    {
+      "name": "Chinedu",
+      "url": "https://github.com/SirG97"
+    },
+    {
+      "name": "Armstrong",
+      "url": "https://github.com/enginemoves"
+    },
+    {
+      "name": "Adebowale",
+      "url": "https://github.com/Princedebo01"
+    },
+    {
+      "name": "Muhydeen",
+      "url": "https://github.com/muhydeen95"
+    },
+    {
+      "name": "Dotun",
+      "url": "https://github.com/d8zzy"
+    },
+    {
+      "name": "Busola",
+      "url": "https://github.com/codearemo"
+    }
   ],
   "type": "module",
   "workspaces": ["packages/*"],
