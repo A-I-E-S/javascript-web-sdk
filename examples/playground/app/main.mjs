@@ -48,9 +48,10 @@ const filterResolver = {
     .map((field) => [field.key, field.options]))
 };
 const filterDrawerService = sdk ? new sdk.FilterDrawerService(drawerService, filterQueryService, filterResolver) : null;
+const notificationSeed = [{ id: 'notice-1', title: 'Shipment update', message: 'AFR-102948 departed Lagos', read: false }];
 const notificationAdapter = {
   list: async (page) => ({
-    data: [{ id: `notice-${page}`, title: 'Shipment update', message: 'AFR-102948 departed Lagos', read: false }],
+    data: page === 1 ? notificationSeed : notificationSeed.map((item, index) => ({ ...item, id: `notice-${page}-${index + 1}` })),
     has_next_page: page < 2
   }),
   markRead: async (id) => ({ id, read: true })
@@ -70,7 +71,8 @@ const state = {
   lastFocus: null,
   clockTimer: null,
   accessTokenOpen: false,
-  accountMenuOpen: false
+  accountMenuOpen: false,
+  notificationUnread: notificationSeed.filter((item) => !item.read).length
 };
 
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -117,7 +119,7 @@ function syncTheme() {
   if (theme) {
     const dark = state.theme === 'dark';
     theme.setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} theme`);
-    theme.innerHTML = `${renderIcon(dark ? 'alarm' : 'adjust', 14)}<span id="theme-toggle-label">${dark ? 'Light' : 'Dark'}</span>`;
+    theme.innerHTML = `${renderIcon(dark ? 'sun-o' : 'adjust', 14)}<span id="theme-toggle-label">${dark ? 'Light' : 'Dark'}</span>`;
   }
 }
 
@@ -204,7 +206,7 @@ function syncHeaderState() {
       : `rounded-md px-3 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-background-welcome dark:text-neutral-400 dark:hover:bg-white/10`;
     button.setAttribute('aria-pressed', String(selected));
   }
-  const unread = 1;
+  const unread = state.notificationUnread;
   const badge = $('#notification-badge');
   if (badge) {
     badge.textContent = String(unread);
@@ -841,7 +843,11 @@ function bindShell() {
     syncHeaderState();
     showToast('info', 'Token cleared');
   });
-  $('#notifications')?.addEventListener('click', () => { notificationDrawerService?.open(); });
+  $('#notifications')?.addEventListener('click', () => {
+    state.notificationUnread = 0;
+    syncHeaderState();
+    notificationDrawerService?.open();
+  });
   $('#account-menu')?.addEventListener('click', () => state.accountMenuOpen ? closeAccountMenu() : openAccountMenu());
   $$('[data-account-action]').forEach((button) => {
     button.addEventListener('click', async () => {
