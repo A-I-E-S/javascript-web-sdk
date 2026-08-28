@@ -861,8 +861,6 @@ function bindShell() {
   });
   document.addEventListener('click', (event) => {
     const pathList = event.composedPath();
-    const navLink = event.target instanceof Element ? event.target.closest('a[href^="#/"]') : null;
-    if (navLink) requestAnimationFrame(renderRoute);
     if (!pathList.includes($('#access-token')) && !pathList.includes($('#access-token-panel')) && state.accessTokenOpen) closeAccessTokenPanel();
     if (!pathList.includes($('#account-menu')) && !pathList.includes($('#account-menu-panel')) && state.accountMenuOpen) closeAccountMenu();
     if (!(event.target instanceof Element && event.target.closest('[data-row-menu-button],[data-row-menu]'))) {
