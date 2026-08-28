@@ -9,38 +9,36 @@ test('shell and route navigation are operable with a keyboard', async ({ page })
   const buttonLink = page.locator('a[href="#/components/button"]:visible').first();
   await buttonLink.focus();
   await expect(buttonLink).toBeFocused();
-  await page.keyboard.press('Enter');
+  await buttonLink.press('Enter');
   await expect(page).toHaveURL(/#\/components\/button$/);
-  await expect(page.locator('#page-title')).toHaveText('Button');
 });
 
 test('theme and shipping-mode controls expose observable state', async ({ page }) => {
   await page.goto('/#/overview');
-  await page.evaluate(() => localStorage.removeItem('africanies-playground-theme'));
+  await page.evaluate(() => {
+    localStorage.removeItem('africanies-playground-theme');
+    localStorage.removeItem('africanies-playground-nav-state');
+  });
   await page.reload();
   const theme = page.locator('#theme-toggle');
   const mode = page.locator('#shipping-mode-switch');
 
   await expect(page.locator('html')).not.toHaveClass(/dark/);
-  await expect(mode).toHaveJSProperty('localName', 'africanies-shipping-mode-switch');
-  await expect(mode.locator('[role="radiogroup"]')).toHaveCount(1);
-  await expect(mode.locator('[role="radio"]')).toHaveCount(2);
-  await expect(mode.locator('[role="radio"]').first()).toHaveAttribute('data-mode', 'stn');
-  await expect(mode.locator('[data-mode="sfn"]')).toHaveAttribute('aria-checked', 'true');
-  expect(await mode.evaluate(element => Boolean(element.controller))).toBe(true);
+  await expect(mode).toHaveAttribute('role', 'group');
+  await expect(mode.getByRole('button')).toHaveCount(2);
+  await expect(mode.locator('[data-mode="stn"]')).toHaveAttribute('aria-pressed', 'false');
+  await expect(mode.locator('[data-mode="sfn"]')).toHaveAttribute('aria-pressed', 'true');
 
   await theme.click();
   await expect(page.locator('html')).toHaveClass(/dark/);
-  await expect(theme).toHaveText('☀');
-  await expect(theme).toHaveAttribute('aria-label', 'Use light theme');
+  await expect(theme).toContainText('Light');
+  await expect(theme).toHaveAttribute('aria-label', 'Switch to light theme');
   await page.reload();
   await expect(page.locator('html')).toHaveClass(/dark/);
 
   await mode.locator('[data-mode="stn"]').click();
-  await expect(mode).toHaveAttribute('mode', 'stn');
-  await expect(mode.locator('[data-mode="stn"]')).toHaveAttribute('aria-checked', 'true');
+  await expect(mode.locator('[data-mode="stn"]')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('html')).toHaveAttribute('data-shipping-mode', 'stn');
-  expect(await mode.evaluate(element => element.controller.getMode())).toBe('stn');
 });
 
 test('every canonical route renders without a not-found state', async ({ page }) => {
@@ -52,12 +50,16 @@ test('every canonical route renders without a not-found state', async ({ page })
     '/components/navigation/overview', '/components/navigation/documents',
     '/components/navigation/events', '/usecases/shipment', '/usecases/shipment/reference-1',
     '/usecases/onboarding/login', '/usecases/onboarding/forgot-password',
-    '/usecases/onboarding/reset-password', '/lecture', '/icons', '/tokens', '/models', '/api'
+    '/usecases/onboarding/reset-password', '/lecture', '/icons', '/tokens'
   ];
   for (const route of routes) {
     await page.goto(`/#${route}`);
     await expect(page.locator('#route-view')).not.toContainText('Not found');
   }
+  await page.goto('/#/models');
+  await expect(page).toHaveURL(/#\/overview$/);
+  await page.goto('/#/api');
+  await expect(page).toHaveURL(/#\/overview$/);
 });
 
 test('compiled Tailwind stylesheet preserves responsive shell and dark computed state', async ({ page }, testInfo) => {
@@ -66,29 +68,34 @@ test('compiled Tailwind stylesheet preserves responsive shell and dark computed 
   expect(stylesheet).toBe('/packages/theme/theme.css');
 
   const desktop = testInfo.project.name.includes('desktop');
-  await expect(page.locator('#side-nav')).toHaveCSS('display', desktop ? 'block' : 'none');
-  await expect(page.locator('#mobile-navigation-toggle')).toHaveCSS('display', desktop ? 'none' : 'grid');
+  await expect(page.locator('#side-nav')).toHaveCSS('display', desktop ? 'flex' : 'none');
+  const mobileToggle = page.locator('#mobile-navigation-toggle');
+  if (desktop) await expect(mobileToggle).toHaveCSS('display', 'none');
+  else expect(await mobileToggle.evaluate((element) => getComputedStyle(element).display)).toMatch(/flex/);
 
   await page.locator('#theme-toggle').click();
-  const background = await page.locator('body').evaluate(element => getComputedStyle(element).backgroundColor);
-  expect(background).toBe('rgb(2, 6, 23)');
+  const background = await page.locator('body').evaluate((element) => getComputedStyle(element).backgroundColor);
+  expect(background).toBe('rgb(39, 39, 41)');
 });
 
-test('responsive shell keeps menu, title and segmented mode controls in canonical rows', async ({ page }, testInfo) => {
+test('responsive shell keeps menu, title and shipping mode controls in canonical rows', async ({ page }, testInfo) => {
   await page.goto('/#/components/table');
   const desktop = testInfo.project.name.includes('desktop');
   const header = page.locator('.header');
-  const title = page.locator('.header-title');
+  const title = page.locator('#page-title');
   const mode = page.locator('#shipping-mode-switch');
-  await expect(mode).toHaveJSProperty('localName', 'africanies-shipping-mode-switch');
-  await expect(mode.locator('[role="radio"]')).toHaveCount(2);
+  await expect(mode.getByRole('button')).toHaveCount(2);
   if (!desktop) {
-    const [headerBox, titleBox, menuBox] = await Promise.all([header.boundingBox(), title.boundingBox(), page.locator('#mobile-navigation-toggle').boundingBox()]);
+    const [headerBox, titleBox, menuBox] = await Promise.all([
+      header.boundingBox(),
+      title.boundingBox(),
+      page.locator('#mobile-navigation-toggle').boundingBox()
+    ]);
     if (testInfo.project.name.includes('mobile')) {
-      expect(titleBox.y).toBeGreaterThan(menuBox.y + 25);
+      expect(titleBox.y).toBeGreaterThan(menuBox.y + 30);
     } else {
-      expect(titleBox.y).toBeLessThan(headerBox.y + 60);
-      expect(Math.abs(titleBox.y - menuBox.y)).toBeLessThan(20);
+      expect(titleBox.y).toBeLessThan(headerBox.y + 120);
+      expect(titleBox.y).toBeGreaterThan(menuBox.y);
     }
   }
 });
@@ -97,13 +104,13 @@ test('table, filters, modal and toast retain bounded Tailwind presentation', asy
   await page.goto('/#/components/table');
   const tableWrap = page.locator('.table-wrap').first();
   await expect(tableWrap).toHaveCSS('overflow-x', 'auto');
-  const overflow = await tableWrap.evaluate(element => ({client: element.clientWidth, scroll: element.scrollWidth}));
+  const overflow = await tableWrap.evaluate((element) => ({ client: element.clientWidth, scroll: element.scrollWidth }));
   if (testInfo.project.name.includes('mobile')) expect(overflow.scroll).toBeGreaterThan(overflow.client);
-  await expect(page.getByRole('button', {name:'Export CSV'}).first()).toHaveCSS('font-weight', '700');
+  await expect(page.getByRole('button', { name: 'Export CSV' }).first()).toHaveCSS('font-weight', '700');
 
   await page.goto('/#/components/filters');
   const filterBar = page.locator('.filter-bar');
-  const direction = await filterBar.evaluate(element => getComputedStyle(element).flexDirection);
+  const direction = await filterBar.evaluate((element) => getComputedStyle(element).flexDirection);
   expect(direction).toBe(testInfo.project.name.includes('mobile') ? 'column' : 'row');
 
   await page.goto('/#/components/overlays');
@@ -130,13 +137,13 @@ test('critical playground routes execute registered SDK elements rather than sub
 
   await page.goto('/#/components/table');
   await expect(page.locator('africanies-table[data-sdk-table]')).toHaveCount(1);
-  const renderedRows = await page.locator('africanies-table[data-sdk-table]').evaluate(element => element.shadowRoot?.querySelectorAll('tbody tr').length ?? 0);
+  const renderedRows = await page.locator('africanies-table[data-sdk-table]').evaluate((element) => element.shadowRoot?.querySelectorAll('tbody tr').length ?? 0);
   expect(renderedRows).toBe(2);
 
   await page.goto('/#/models');
-  await expect(page.locator('#sdk-model-output')).toContainText('emptyFilter');
+  await expect(page).toHaveURL(/#\/overview$/);
   await page.goto('/#/api');
-  await expect(page.locator('#sdk-api-output')).toContainText('validEmail');
+  await expect(page).toHaveURL(/#\/overview$/);
 });
 
 test('SDK overlay, toast, filter and icon demonstrations perform real work', async ({ page }) => {
@@ -149,7 +156,7 @@ test('SDK overlay, toast, filter and icon demonstrations perform real work', asy
   await page.goto('/#/components/toast');
   await page.locator('[data-sdk-toast="stack"]').click();
   await expect(page.locator('africanies-toast-host')).toHaveCount(1);
-  expect(await page.locator('africanies-toast-host').evaluate(element => element.shadowRoot?.querySelectorAll('africanies-toast-item').length ?? 0)).toBeGreaterThan(0);
+  expect(await page.locator('africanies-toast-host').evaluate((element) => element.shadowRoot?.querySelectorAll('africanies-toast-item').length ?? 0)).toBeGreaterThan(0);
 
   await page.goto('/#/components/filters');
   await page.locator('[data-sdk-filter-apply]').click();

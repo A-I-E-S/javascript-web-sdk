@@ -36,14 +36,14 @@ export class ThemeService {
     const changed = theme !== this.#theme;
     this.#theme = theme;
     this.#applyToDocument(theme);
-    try { this.#storage.set(this.#storageKey, theme); } catch { /* visual state remains authoritative */ }
+    try { this.#storage.set(this.#storageKey, theme); } catch {}
     if (changed) for (const listener of [...this.#listeners]) listener(theme);
   }
   toggle(): Theme { const next = this.#theme === 'light' ? 'dark' : 'light'; this.setTheme(next); return next; }
   subscribe(listener: (theme: Theme) => void): Unsubscribe { this.#listeners.add(listener); return () => { this.#listeners.delete(listener); }; }
   destroy(): void { this.#listeners.clear(); }
   #resolveInitialTheme(): Theme {
-    try { const stored = this.#storage.get<Theme>(this.#storageKey); if (stored === 'light' || stored === 'dark') return stored; } catch { /* system fallback */ }
+    try { const stored = this.#storage.get<Theme>(this.#storageKey); if (stored === 'light' || stored === 'dark') return stored; } catch {}
     return this.#document.defaultView?.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
   #applyToDocument(theme: Theme): void {
@@ -52,15 +52,35 @@ export class ThemeService {
   }
 }
 
-export interface ModeColorClasses { text: string; bg: string; bgSubtle: string; border: string; primary: string; ghostPrimary: string; soft: string; softHover: string }
+export interface ModeColorClasses { text: string; bg: string; bgSubtle: string; border: string; primary: string; ghostPrimary: string; soft: string; softSolid: string; softHover: string }
 const freezeModeColors = (classes: ModeColorClasses): Readonly<ModeColorClasses> => Object.freeze(classes);
 export const MODE_COLOR_CLASSES = Object.freeze({
-  sfn: freezeModeColors({ text: 'text-export', bg: 'bg-export', bgSubtle: 'bg-export-subtle', border: 'border-export', primary: 'bg-export text-white border-transparent hover:bg-export-light', ghostPrimary: 'bg-transparent text-export border-transparent hover:bg-export-subtle dark:hover:bg-export/15', soft: 'bg-export-subtle dark:bg-export/15', softHover: 'hover:bg-export-subtle dark:hover:bg-export/15' }),
-  stn: freezeModeColors({ text: 'text-import', bg: 'bg-import', bgSubtle: 'bg-import-subtle', border: 'border-import', primary: 'bg-import text-white border-transparent hover:bg-import-light', ghostPrimary: 'bg-transparent text-import border-transparent hover:bg-import-subtle dark:hover:bg-import/15', soft: 'bg-import-subtle dark:bg-import/15', softHover: 'hover:bg-import-subtle dark:hover:bg-import/15' })
+  sfn: freezeModeColors({
+    text: 'text-export',
+    bg: 'bg-export',
+    bgSubtle: 'bg-export-subtle',
+    border: 'border-export',
+    primary: 'bg-export text-white border-transparent hover:bg-export-light',
+    ghostPrimary: 'bg-transparent text-export border-transparent hover:bg-export-subtle dark:hover:bg-export/15',
+    soft: 'bg-export-subtle dark:bg-export/15',
+    softSolid: 'bg-export-subtle dark:bg-[color-mix(in_srgb,#1cbd5d_15%,#212529)]',
+    softHover: 'hover:bg-export-subtle dark:hover:bg-export/15'
+  }),
+  stn: freezeModeColors({
+    text: 'text-import',
+    bg: 'bg-import',
+    bgSubtle: 'bg-import-subtle',
+    border: 'border-import',
+    primary: 'bg-import text-white border-transparent hover:bg-import-light',
+    ghostPrimary: 'bg-transparent text-import border-transparent hover:bg-import-subtle dark:hover:bg-import/15',
+    soft: 'bg-import-subtle dark:bg-import/15',
+    softSolid: 'bg-import-subtle dark:bg-[color-mix(in_srgb,#f08829_15%,#212529)]',
+    softHover: 'hover:bg-import-subtle dark:hover:bg-import/15'
+  })
 } as const);
 export const MODE_COLOR_SAFELIST = Object.freeze([
-  'text-export', 'bg-export', 'bg-export-subtle', 'bg-export-light', 'border-export', 'hover:bg-export-light', 'hover:bg-export-subtle', 'dark:bg-export/15', 'dark:hover:bg-export/15',
-  'text-import', 'bg-import', 'bg-import-subtle', 'bg-import-light', 'border-import', 'hover:bg-import-light', 'hover:bg-import-subtle', 'dark:bg-import/15', 'dark:hover:bg-import/15'
+  'text-export', 'bg-export', 'bg-export-subtle', 'bg-export-light', 'border-export', 'hover:bg-export-light', 'hover:bg-export-subtle', 'dark:bg-export/15', 'dark:hover:bg-export/15', 'dark:bg-[color-mix(in_srgb,#1cbd5d_15%,#212529)]',
+  'text-import', 'bg-import', 'bg-import-subtle', 'bg-import-light', 'border-import', 'hover:bg-import-light', 'hover:bg-import-subtle', 'dark:bg-import/15', 'dark:hover:bg-import/15', 'dark:bg-[color-mix(in_srgb,#f08829_15%,#212529)]'
 ] as const);
 export interface ShippingModeSource { getMode(): ShippingMode; subscribe?(listener: (mode: ShippingMode) => void): Unsubscribe }
 export class ModeColorService {

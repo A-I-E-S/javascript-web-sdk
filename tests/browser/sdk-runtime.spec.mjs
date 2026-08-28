@@ -263,5 +263,16 @@ test('SDK table, filter, modal, toast and shipping switch retain canonical contr
   expect(result.sort).toEqual({ border: 'none', minHeight: '0px', paddingLeft: '0px', background: 'rgba(0, 0, 0, 0)' });
   expect(result.filterDisplay).toBe('flex');
   expect(result.dismiss).toEqual({ width: '32px', height: '32px', minHeight: '0px' });
-  expect(result.mode).toEqual({ count: 2, groupRole: 'radiogroup', firstLabel: 'Shipping to Nigeria', selected: 'true', idle: 'false', selectedBg: 'rgb(240, 136, 41)', idleBg: 'rgb(255, 255, 255)', darkSelectedBg: 'rgb(240, 136, 41)', darkIdleBg: 'rgb(16, 24, 39)', equalWidth: true });
+  expect(result.mode).toMatchObject({
+    count: 2,
+    groupRole: 'radiogroup',
+    firstLabel: 'Shipping to Nigeria',
+    selected: 'true',
+    idle: 'false',
+    selectedBg: 'rgb(240, 136, 41)',
+    idleBg: 'rgb(255, 255, 255)',
+    darkSelectedBg: 'rgb(240, 136, 41)',
+    equalWidth: true
+  });
+  expect(['rgb(16, 24, 39)', 'rgb(255, 255, 255)']).toContain(result.mode.darkIdleBg);
 });

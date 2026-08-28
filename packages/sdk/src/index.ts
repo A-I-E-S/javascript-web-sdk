@@ -9,7 +9,9 @@ import { AFRICANIES_ICON_SPRITE_URL, defineAfricaniesIcon, type IconDocument } f
 import { defineAfricaniesElements as defineUiElements, type AfricaniesUiElementName } from '@africanies/africanies-ui';
 
 export interface DefineAfricaniesElementsOptions {
+  /** @deprecated Use customElements. If both are provided, registry takes precedence. */
   registry?: CustomElementRegistry;
+  customElements?: CustomElementRegistry;
   document?: Document;
   HTMLElement?: typeof globalThis.HTMLElement;
   fetch?: typeof globalThis.fetch;
@@ -21,7 +23,7 @@ export interface DefineAfricaniesElementsOptions {
  * internally by buttons, chips, alerts and toast surfaces.
  */
 export function defineAfricaniesElements(options: DefineAfricaniesElementsOptions = {}): readonly AfricaniesUiElementName[] {
-  const registry = options.registry ?? globalThis.customElements;
+  const registry = options.registry ?? options.customElements ?? globalThis.customElements;
   const document = options.document ?? globalThis.document;
   const ElementBase = options.HTMLElement ?? globalThis.HTMLElement;
   const defined = defineUiElements(registry);

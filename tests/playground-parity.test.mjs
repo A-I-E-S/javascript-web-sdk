@@ -34,8 +34,8 @@ test('playground is a substantive SDK-backed replica rather than route scaffoldi
   assert.match(shell, /mobile-navigation/);
   assert.match(html, /href=["']\/packages\/theme\/theme\.css["']/);
   assert.doesNotMatch(html, /<style[\s>]/i);
-  assert.match(shell, /max-\[900px\]:/);
-  assert.match(shell, /max-\[520px\]:/);
+  assert.match(shell, /lg:hidden/);
+  assert.match(shell, /backdrop-blur-md/);
 });
 
 test('playground Tailwind utilities are statically extractable for dynamic states', async () => {

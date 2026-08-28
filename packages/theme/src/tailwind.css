@@ -5,12 +5,20 @@
 @layer base {
   :root {
     color-scheme: light;
+    --africanies-ink: #212529;
+    --africanies-ink-950: #272729;
+    --africanies-background-welcome: #f1f5f9;
+    --africanies-border: #c9d5e1;
     --africanies-export: #1cbd5d;
     --africanies-export-light: #24dc6d;
-    --africanies-export-subtle: #e4fff3;
+    --africanies-export-subtle: #e6f6ed;
     --africanies-import: #f08829;
     --africanies-import-light: #ffa95b;
-    --africanies-import-subtle: #fffcef;
+    --africanies-import-subtle: #fdf3e8;
+    --africanies-danger: #ff001c;
+    --africanies-danger-subtle: #fdecec;
+    --africanies-warning: #dbb316;
+    --africanies-warning-subtle: #fdf3d9;
   }
 
   :root.dark {
