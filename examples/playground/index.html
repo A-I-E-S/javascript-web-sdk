@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AFRICANIES Web SDK · Playground</title>
+    <style>
+      :root { color-scheme: light; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+      body { margin: 0; background: #e6ebf1; color: #101828; }
+      .layout { min-height: 100vh; display: grid; grid-template-columns: 280px 1fr; }
+      #side-nav { border-right: 1px solid #d0d8e2; padding: 1rem; background: #f2f5f8; }
+      #content { padding: 1rem 1.25rem 2rem; }
+      .header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid #d0d8e2; border-radius: 12px; background: #fff; padding: .75rem; }
+      .toolbar { display: flex; flex-wrap: wrap; gap: .5rem; }
+      .pill { border: 1px solid #d0d8e2; background: #fff; border-radius: 8px; padding: .35rem .6rem; cursor: pointer; }
+      #route-view { margin-top: 1rem; border: 1px solid #d0d8e2; border-radius: 12px; background: #fff; padding: 1rem; min-height: 220px; }
+      #breadcrumbs { margin: .75rem 0 0; font-size: .9rem; color: #475467; }
+      a { color: inherit; text-decoration: none; }
+      #side-nav ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .25rem; }
+      #side-nav a { display: block; border-radius: 8px; padding: .4rem .5rem; }
+      #side-nav a[aria-current="page"] { background: #fff; border: 1px solid #d0d8e2; }
+      .dark { color-scheme: dark; }
+      .dark body { background: #0a0f1a; color: #f8fafc; }
+      .dark #side-nav { background: #131c2c; border-right-color: #253245; }
+      .dark .header, .dark #route-view { background: #101828; border-color: #253245; }
+      .dark .pill { background: #101828; border-color: #253245; color: #f8fafc; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="./app/main.mjs"></script>
+  </body>
+</html>
