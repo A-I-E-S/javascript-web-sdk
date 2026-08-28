@@ -10,15 +10,22 @@ test('all public packages have stable manifests and explicit exports', async () 
   for (const directory of packageNames) {
     const manifest = JSON.parse(await readFile(`packages/${directory}/package.json`, 'utf8'));
     assert.equal(manifest.type, 'module');
-    const expectedExports = directory === 'theme'
-      ? ['.', './theme.css']
+    const expectedExports = directory === 'sdk'
+      ? ['.', './browser/esm', './browser/global', './theme.css', './icons.sprite.svg']
+      : directory === 'theme'
+      ? ['.', './theme.css', './tailwind-preset']
       : directory === 'icons'
         ? ['.', './icons.sprite.svg']
         : ['.'];
     assert.deepEqual(Object.keys(manifest.exports), expectedExports);
     assert.equal(manifest.exports['.'].types, './dist/index.d.ts');
     assert.equal(manifest.exports['.'].import, './dist/index.js');
-    assert.deepEqual(manifest.sideEffects, directory === 'theme' ? ['./theme.css'] : false);
+    const expectedSideEffects = directory === 'theme'
+      ? ['./theme.css']
+      : directory === 'sdk'
+        ? ['./dist/theme.css']
+        : false;
+    assert.deepEqual(manifest.sideEffects, expectedSideEffects);
   }
 });
 
@@ -26,8 +33,10 @@ test('theme and icon packages publish their browser assets explicitly', async ()
   const theme = JSON.parse(await readFile('packages/theme/package.json', 'utf8'));
   const icons = JSON.parse(await readFile('packages/icons/package.json', 'utf8'));
   assert.equal(theme.exports['./theme.css'], './theme.css');
+  assert.equal(theme.exports['./tailwind-preset'], './tailwind.preset.mjs');
   assert.equal(icons.exports['./icons.sprite.svg'], './assets/icons.sprite.svg');
   assert.ok(theme.files.includes('theme.css'));
+  assert.ok(theme.files.includes('tailwind.preset.mjs'));
   assert.ok(icons.files.includes('assets'));
 });
 

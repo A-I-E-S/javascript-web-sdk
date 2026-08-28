@@ -2,7 +2,7 @@
 
 Framework-independent browser SDK translating the intended public behavior of the [AFRICANIES Angular Web SDK](https://github.com/A-I-E-S/angular-web-sdk) into TypeScript-authored JavaScript without Angular or RxJS.
 
-> Pre-release: the framework-independent core, storage, theme, icon, and 50+ custom-element UI surface is implemented and tested. Browser release evidence and owner approval are still required before publication. Consult the [Project Context parity matrix](https://github.com/A-I-E-S/javascript-web-sdk-context).
+> Pre-release parity recovery: the Vanilla implementation is being revalidated against the canonical Angular source and playground. Passing local contract tests does not by itself establish complete visual or behavioral parity. Browser evidence, parity review, and owner approval are required before publication. Consult the [Project Context parity matrix](https://github.com/A-I-E-S/javascript-web-sdk-context).
 
 ## Documentation
 
@@ -23,6 +23,8 @@ npm run artifact:verify
 ```
 
 The artifact verifier never publishes or creates releases.
+
+The coordinated candidate package version is `0.1.0`. It is not a statement that this version has been published; use only a version confirmed by the npm registry when installing from npm or a CDN.
 
 ## Contributors
 

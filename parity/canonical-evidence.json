@@ -1,0 +1,23 @@
+{
+  "$schema": "./schemas/canonical-evidence.schema.json",
+  "canonical": {
+    "source": "https://github.com/A-I-E-S/angular-web-sdk",
+    "playground": "https://a-i-e-s.github.io/angular-web-sdk/",
+    "capturedAt": "2026-08-28",
+    "viewports": [
+      { "id": "desktop", "width": 1440, "height": 1000 },
+      { "id": "tablet", "width": 768, "height": 1000 },
+      { "id": "mobile", "width": 390, "height": 844 }
+    ]
+  },
+  "evidence": [
+    { "id": "shell.desktop", "route": "/overview", "state": "light-export", "viewports": ["desktop"] },
+    { "id": "shell.tablet", "route": "/overview", "state": "light-export", "viewports": ["tablet"] },
+    { "id": "shell.mobile", "route": "/overview", "state": "light-export", "viewports": ["mobile"] },
+    { "id": "shell.dark", "route": "/overview", "state": "dark-export", "viewports": ["desktop", "tablet", "mobile"] },
+    { "id": "shell.import", "route": "/overview", "state": "light-import", "viewports": ["desktop", "tablet", "mobile"] },
+    { "id": "feedback.states", "route": "/components/feedback", "state": "loading-empty-error-success", "viewports": ["desktop"] },
+    { "id": "overlays.keyboard", "route": "/components/overlays", "state": "open-focus-escape", "viewports": ["desktop"] },
+    { "id": "toast.success", "route": "/components/toast", "state": "success-visible", "viewports": ["desktop"] }
+  ]
+}

@@ -1,8 +1,9 @@
 import type { DrawerService, AfricaniesOverlayRef } from './overlay.js';
+import { withAfricaniesShadowStyles } from './styles.js';
 type HTMLElementConstructor = typeof HTMLElement;
 const HTMLElementBase: HTMLElementConstructor = (globalThis.HTMLElement ?? class {}) as HTMLElementConstructor;
 const esc = (value: unknown): string => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-abstract class MiscElement extends HTMLElementBase { protected root: ShadowRoot | null = null; connectedCallback(): void { if (!this.root && typeof this.attachShadow === 'function') this.root = this.attachShadow({ mode: 'open' }); this.render(); } attributeChangedCallback(): void { this.render(); } protected abstract render(): void; protected html(value: string): void { if (this.root) this.root.innerHTML = value; } }
+abstract class MiscElement extends HTMLElementBase { protected root: ShadowRoot | null = null; connectedCallback(): void { if (!this.root && typeof this.attachShadow === 'function') this.root = this.attachShadow({ mode: 'open' }); this.render(); } attributeChangedCallback(): void { this.render(); } protected abstract render(): void; protected html(value: string): void { if (this.root) this.root.innerHTML = withAfricaniesShadowStyles(value); } }
 
 export interface ActionMenuItem { id: string; label: string; disabled?: boolean; danger?: boolean; }
 export class ActionMenuComponent extends MiscElement {

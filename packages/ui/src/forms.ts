@@ -1,3 +1,5 @@
+import { withAfricaniesShadowStyles } from './styles.js';
+
 type HTMLElementConstructor = typeof HTMLElement;
 const HTMLElementBase: HTMLElementConstructor = (globalThis.HTMLElement ?? class {}) as HTMLElementConstructor;
 const html = (value: unknown): string => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -40,7 +42,7 @@ abstract class FormControlElement extends HTMLElementBase {
     const label = this.getAttribute('label') ?? '';
     const error = this.getAttribute('error') ?? '';
     const errorId = `${this.controlId}-error`;
-    this.root.innerHTML = `${label ? `<label part="label" for="${this.controlId}">${html(label)}</label>` : ''}${this.controlMarkup()}${error ? `<div part="error" id="${errorId}" role="alert">${html(error)}</div>` : ''}`;
+    this.root.innerHTML = withAfricaniesShadowStyles(`${label ? `<label part="label" for="${this.controlId}">${html(label)}</label>` : ''}${this.controlMarkup()}${error ? `<div part="error" id="${errorId}" role="alert">${html(error)}</div>` : ''}`);
     this.control = this.root.querySelector('input,textarea,select');
     if (!this.control) return;
     this.control.id = this.controlId;

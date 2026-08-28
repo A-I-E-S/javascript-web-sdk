@@ -32,6 +32,21 @@ test('toast timers pause, resume, peel stacks and are cleared on destroy', () =>
   service.destroy(); assert.equal(callbacks.size, 0);
 });
 
+test('toast host contract exposes canonical stack actions', () => {
+  const service = new ToastService();
+  const first = service.show({ message: 'One', durationMs: null });
+  service.show({ message: 'One', durationMs: null });
+  const second = service.show({ message: 'Two', durationMs: null });
+  assert.equal(service.showHostActions, true);
+  service.expandAll();
+  assert.equal(service.allStacksExpanded, true);
+  service.collapseAll();
+  assert.equal(service.allStacksExpanded, false);
+  service.dismiss(first);
+  service.dismiss(second);
+  assert.equal(service.items.length, 0);
+});
+
 test('toast item exposes assertive accessibility semantics for warning and danger', () => {
   assert.ok(ToastItemComponent);
   const source = ToastItemComponent.prototype.constructor.toString();

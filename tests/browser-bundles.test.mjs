@@ -5,7 +5,7 @@ import test from 'node:test';
 
 test('CDN ESM bundle imports without browser globals', async () => {
   const sdk = await import('../packages/sdk/dist/africanies-web-sdk.esm.js');
-  assert.equal(sdk.VERSION, '0.0.0-development');
+  assert.equal(sdk.VERSION, '0.1.0');
   assert.equal(sdk.CORE_PACKAGE_NAME, '@africanies/africanies-core');
 });
 
@@ -14,6 +14,6 @@ test('CDN global bundle exposes one documented Africanies namespace', async () =
   const context = {};
   runInNewContext(source, context);
   assert.equal(typeof context.Africanies, 'object');
-  assert.equal(context.Africanies.VERSION, '0.0.0-development');
+  assert.equal(context.Africanies.VERSION, '0.1.0');
   assert.equal(context.Africanies.UI_PACKAGE_NAME, '@africanies/africanies-ui');
 });

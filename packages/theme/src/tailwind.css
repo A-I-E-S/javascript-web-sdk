@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --africanies-export: #1cbd5d;
+    --africanies-export-light: #24dc6d;
+    --africanies-export-subtle: #e4fff3;
+    --africanies-import: #f08829;
+    --africanies-import-light: #ffa95b;
+    --africanies-import-subtle: #fffcef;
+  }
+
+  :root.dark {
+    color-scheme: dark;
+  }
+}

@@ -5,5 +5,9 @@ export * from '@africanies/africanies-theme';
 export * from '@africanies/africanies-icons';
 export * from '@africanies/africanies-ui';
 
-/** Version is replaced by the release pipeline for published artifacts. */
-export const VERSION = '0.0.0-development';
+declare const __AFRICANIES_SDK_VERSION__: string | undefined;
+
+/** Package version; browser bundles may override it through the reproducible build input. */
+export const VERSION = typeof __AFRICANIES_SDK_VERSION__ === 'string'
+  ? __AFRICANIES_SDK_VERSION__
+  : '0.1.0';

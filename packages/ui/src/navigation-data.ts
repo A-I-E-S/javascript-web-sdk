@@ -1,3 +1,5 @@
+import { withAfricaniesShadowStyles } from './styles.js';
+
 type HTMLElementConstructor = typeof HTMLElement;
 const HTMLElementBase: HTMLElementConstructor = (globalThis.HTMLElement ?? class {}) as HTMLElementConstructor;
 const esc = (value: unknown): string => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -20,7 +22,7 @@ abstract class ViewElement extends HTMLElementBase {
   connectedCallback(): void { if (!this.root && typeof this.attachShadow === 'function') this.root = this.attachShadow({ mode: 'open' }); this.render(); }
   attributeChangedCallback(): void { this.render(); }
   protected abstract render(): void;
-  protected markup(value: string): void { if (this.root) this.root.innerHTML = value; }
+  protected markup(value: string): void { if (this.root) this.root.innerHTML = withAfricaniesShadowStyles(value); }
   protected emit(name: string, detail: unknown): void { this.dispatchEvent(new CustomEvent(name, { bubbles: true, composed: true, detail })); }
 }
 

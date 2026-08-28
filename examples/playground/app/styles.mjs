@@ -1,0 +1,85 @@
+/** Static Tailwind mappings keep runtime state classes visible to the extractor. */
+export const PLAYGROUND_UTILITY_CLASSES = Object.freeze({
+  layout: 'min-h-screen grid grid-cols-[240px_minmax(0,1fr)] max-[900px]:block bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100',
+  brand: 'flex items-center gap-2.5 px-2 pb-6',
+  'brand-mark': 'grid h-[34px] w-[34px] place-items-center rounded-lg bg-blue-700 font-extrabold text-white dark:bg-blue-600',
+  'nav-group': 'mb-5', 'nav-mark': 'text-xs',
+  'sidebar-footer': 'flex items-center gap-2 border-t border-slate-200 px-2 pt-4 dark:border-slate-700',
+  'status-dot': 'inline-block h-2 w-2 rounded-full bg-emerald-500 ring-4 ring-emerald-100',
+  'notification-dot': 'absolute right-[7px] top-[7px] h-[5px] w-[5px] rounded-full bg-red-500',
+  header: 'sticky top-0 z-10 flex h-[72px] items-center gap-5 border-b border-slate-200 bg-white/90 px-7 backdrop-blur max-[900px]:h-auto max-[900px]:min-h-[72px] max-[900px]:flex-wrap max-[900px]:px-5 max-[900px]:py-3 max-[520px]:gap-2.5 max-[520px]:px-3.5 max-[520px]:py-2.5 dark:border-slate-700 dark:bg-slate-900/90',
+  'header-title': 'min-w-[180px] max-[900px]:order-1 max-[520px]:min-w-0',
+  context: 'ml-auto flex gap-3 text-xs text-slate-500 max-[520px]:hidden dark:text-slate-400',
+  weather: 'max-[520px]:hidden', toolbar: 'flex items-center gap-2 max-[900px]:order-2 max-[900px]:w-full max-[900px]:justify-end max-[520px]:order-none max-[520px]:ml-auto max-[520px]:w-auto max-[520px]:gap-1',
+  pill: 'cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900',
+  'icon-button': 'relative inline-grid h-9 w-9 cursor-pointer place-items-center rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900',
+  account: 'flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-2 py-1 text-left max-[520px]:p-1 dark:border-slate-700 dark:bg-slate-900',
+  avatar: 'grid h-[30px] w-[30px] place-items-center rounded-full bg-blue-50 font-extrabold text-blue-700 dark:bg-slate-800 dark:text-blue-300',
+  hamburger: 'hidden max-[900px]:inline-grid',
+  'mobile-nav-backdrop': 'fixed inset-0 z-50 bg-slate-900/50',
+  'mobile-nav': 'h-full w-[280px] overflow-auto bg-white px-4 py-5 dark:bg-slate-900',
+  'mobile-nav-head': 'flex items-center justify-between',
+  'page-enter': 'animate-[page-in_.22s_ease] motion-reduce:animate-none',
+  'page-heading': 'mb-8 max-w-[700px] max-[520px]:mb-6',
+  eyebrow: 'mb-2.5 text-[11px] font-extrabold tracking-[.13em] text-blue-700 dark:text-blue-300',
+  'hero-grid': 'mt-[-10px] grid grid-cols-[1.4fr_.6fr] gap-6 max-[520px]:grid-cols-1',
+  'hero-actions': 'flex items-center gap-5 max-[520px]:flex-col max-[520px]:items-start',
+  'text-link': 'font-bold text-blue-700 dark:text-blue-300', 'back-link': 'font-bold text-blue-700 dark:text-blue-300',
+  'hero-panel': 'rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-900',
+  stats: 'my-9 grid grid-cols-3 rounded-xl border border-slate-200 bg-white max-[520px]:grid-cols-1 dark:border-slate-700 dark:bg-slate-900',
+  'section-title': 'flex items-center justify-between max-[520px]:flex-col max-[520px]:items-start',
+  'catalog-grid': 'mt-5 grid grid-cols-3 gap-4 max-[900px]:grid-cols-2 max-[520px]:grid-cols-1',
+  'catalog-card': 'rounded-xl border border-slate-200 bg-white p-6 transition hover:-translate-y-0.5 hover:shadow-xl max-[900px]:last:col-span-full max-[520px]:last:col-auto dark:border-slate-700 dark:bg-slate-900',
+  'catalog-symbol': 'grid h-[38px] w-[38px] place-items-center rounded-lg bg-blue-50 text-blue-700 dark:bg-slate-800 dark:text-blue-300',
+  'demo-card': 'mb-5 overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900',
+  'demo-copy': 'px-6 pt-5 max-[520px]:px-4', 'demo-stage': 'p-6 max-[520px]:px-4',
+  row: 'flex items-center gap-3', wrap: 'flex-wrap', stack: 'grid gap-3',
+  'sdk-button': 'min-h-10 cursor-pointer rounded-lg border border-transparent px-4 py-2 font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:opacity-50',
+  primary: 'bg-blue-700 text-white hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500',
+  secondary: 'border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800',
+  'ghost-primary': 'bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-slate-800 dark:text-blue-300',
+  danger: 'bg-red-700 text-white', underline: 'bg-transparent text-blue-700 underline dark:text-blue-300',
+  small: 'min-h-8 px-3 py-1 text-xs', large: 'min-h-12 px-6 py-3',
+  spinner: 'inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-r-transparent motion-reduce:animate-none',
+  'large-spinner': 'inline-block h-[30px] w-[30px] animate-spin rounded-full border-2 border-blue-700 border-r-transparent motion-reduce:animate-none',
+  'copy-code': 'absolute right-2 top-2 rounded-md border-0 bg-slate-700 p-2 text-white',
+  alert: 'grid grid-cols-[24px_1fr_36px] gap-2.5 rounded-lg p-4',
+  info: 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300',
+  success: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300',
+  warning: 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300',
+  chip: 'inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-200',
+  neutral: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200',
+  'menu-demo': 'relative inline-block', popover: 'absolute right-0 top-12 z-20 w-[220px] rounded-lg border border-slate-200 bg-white p-1.5 shadow-xl dark:border-slate-700 dark:bg-slate-900',
+  'danger-text': 'text-red-700 dark:text-red-300', segmented: 'flex w-max rounded-lg border border-slate-200 bg-slate-50 p-1 dark:border-slate-700 dark:bg-slate-800',
+  'feedback-state': 'flex min-h-[230px] flex-col items-center justify-center gap-2 text-center', 'feedback-symbol': 'text-3xl',
+  'form-grid': 'grid grid-cols-2 gap-5 max-[520px]:grid-cols-1', wide: 'col-span-full', check: 'flex items-center', 'field-error': 'text-red-700 dark:text-red-300',
+  'filter-bar': 'mb-5 flex gap-2.5 max-[520px]:flex-col', 'table-tools': 'mb-5 flex gap-2.5 max-[520px]:flex-col',
+  search: 'flex flex-1 items-center gap-2 rounded-lg border border-slate-300 bg-white pl-2.5 dark:border-slate-600 dark:bg-slate-900',
+  'text-button': 'border-0 bg-transparent font-bold text-blue-700 dark:text-blue-300',
+  'tooltip-row': 'relative p-8', 'tooltip-trigger': 'peer',
+  'table-wrap': 'overflow-auto rounded-lg border border-slate-200 dark:border-slate-700',
+  pagination: 'mt-3.5 flex items-center justify-end gap-3.5', stepper: 'grid list-none grid-cols-4 p-0 max-[520px]:grid-cols-1 max-[520px]:gap-5',
+  tabs: 'flex gap-6 border-b border-slate-200 dark:border-slate-700', 'tab-panel': 'px-0.5 py-7',
+  'usecase-header': 'flex items-center justify-between max-[520px]:flex-col max-[520px]:items-start',
+  'shipment-summary': 'my-5 flex items-center justify-between rounded-xl border border-slate-200 bg-white p-6 max-[520px]:flex-col max-[520px]:items-start dark:border-slate-700 dark:bg-slate-900',
+  timeline: 'grid list-none gap-7 rounded-xl border border-slate-200 bg-white p-7 dark:border-slate-700 dark:bg-slate-900',
+  'auth-card': 'max-w-[440px] rounded-xl border border-slate-200 bg-white p-7 max-[520px]:p-5 dark:border-slate-700 dark:bg-slate-900',
+  'icon-search': 'mb-5 max-w-[400px]', 'icon-grid': 'grid grid-cols-8 gap-2 max-[900px]:grid-cols-5 max-[520px]:grid-cols-3',
+  'token-grid': 'grid grid-cols-3 gap-3.5 max-[520px]:grid-cols-1', token: 'grid grid-cols-[52px_1fr] gap-x-3 gap-y-1 rounded-xl border border-slate-200 bg-white p-3.5 dark:border-slate-700 dark:bg-slate-900',
+  'api-list': 'grid gap-3', 'overlay-backdrop': 'fixed inset-0 z-30 flex items-center justify-center bg-slate-900/60 p-5',
+  overlay: 'w-full max-w-[520px] rounded-2xl bg-white shadow-2xl dark:bg-slate-900', drawer: 'absolute right-0 top-0 h-full max-w-[460px] rounded-none',
+  'overlay-body': 'min-h-[140px] p-6', toast: 'relative grid w-[360px] grid-cols-[24px_1fr_28px] gap-2.5 rounded-xl border border-l-4 border-slate-200 border-l-blue-700 bg-white p-4 shadow-xl max-[520px]:w-[calc(100vw-24px)] dark:border-slate-700 dark:bg-slate-900',
+  prose: 'max-w-3xl leading-7', 'not-found': 'py-16 text-center', 'demo-icon': 'inline-grid place-items-center'
+});
+
+export const utilities = (...names) => names.flatMap(name => [name, PLAYGROUND_UTILITY_CLASSES[name] ?? '']).filter(Boolean).join(' ');
+
+export function applyUtilities(markup) {
+  return markup
+    .replace(/class="([^"]+)"/g, (_match, names) => `class="${utilities(...names.split(/\s+/))}"`)
+    .replace(/<input(?![^>]*class=)(?![^>]*type="checkbox")/g, '<input class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-slate-600 dark:bg-slate-800"')
+    .replace(/<(select|textarea)(?![^>]*class=)/g, '<$1 class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-slate-600 dark:bg-slate-800"')
+    .replace(/<table(?![^>]*class=)/g, '<table class="w-full min-w-[660px] border-collapse"')
+    .replace(/<th(?![^>]*class=)/g, '<th class="border-b border-slate-200 bg-slate-50 px-3.5 py-3 text-left text-[11px] font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800"')
+    .replace(/<td(?![^>]*class=)/g, '<td class="border-b border-slate-200 px-3.5 py-3 dark:border-slate-700"');
+}

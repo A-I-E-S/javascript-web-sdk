@@ -38,20 +38,30 @@
   "type": "module",
   "workspaces": ["packages/*"],
   "scripts": {
-    "build": "tsc -b && node tools/build-browser.mjs",
+    "build": "tsc -b && npm run build:styles --silent && node tools/build-browser.mjs",
+    "build:styles": "tailwindcss -c tailwind.config.mjs -i packages/theme/src/tailwind.css -o packages/theme/theme.css --minify",
+    "dev": "node tools/dev.mjs",
+    "dev:styles": "tailwindcss -c tailwind.config.mjs -i packages/theme/src/tailwind.css -o packages/theme/theme.css --watch",
     "artifact:verify": "npm run build --silent && node tools/verify-artifacts.mjs",
     "clean": "node tools/clean.mjs",
     "lint": "eslint .",
     "test": "npm run build --silent && node --test tests/*.test.mjs",
+    "test:contracts": "node --test tests/parity-foundation.test.mjs",
+    "test:browser": "playwright test",
+    "test:browser:install": "playwright install --with-deps chromium firefox webkit",
     "typecheck": "tsc -b --pretty false",
     "check": "npm run lint && npm run typecheck && npm test && npm run build"
   },
   "engines": {"node": ">=20"},
   "devDependencies": {
+    "@playwright/test": "1.55.1",
+    "autoprefixer": "10.4.21",
     "@eslint/js": "^9.34.0",
     "esbuild": "^0.25.9",
     "eslint": "^9.34.0",
     "globals": "^16.3.0",
+    "postcss": "8.5.6",
+    "tailwindcss": "3.4.19",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.41.0"
   }

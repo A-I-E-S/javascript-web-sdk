@@ -27,8 +27,12 @@ class OverlayService {
     if (!document?.body) throw new Error('Overlay services require an injected browser document.');
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const previousOverflow = document.body.style.overflow;
-    const backdrop = document.createElement('div'); backdrop.className = 'africanies-overlay-backdrop';
-    const panel = document.createElement('div'); panel.className = `africanies-${this.surface}-panel`;
+    const backdrop = document.createElement('div');
+    backdrop.className = 'africanies-overlay-backdrop fixed inset-0 z-[1000] flex bg-black/50 p-4 backdrop-blur-sm dark:bg-black/70';
+    const panel = document.createElement('div');
+    panel.className = this.surface === 'drawer'
+      ? 'africanies-drawer-panel ml-auto h-full w-[min(100%,32rem)] overflow-y-auto bg-white text-slate-900 shadow-2xl outline-none dark:bg-slate-950 dark:text-white'
+      : 'africanies-modal-panel m-auto max-h-[calc(100dvh-2rem)] w-[min(calc(100%-2rem),32rem)] overflow-y-auto rounded-lg border border-slate-200 bg-white text-slate-900 shadow-2xl outline-none dark:border-white/15 dark:bg-slate-950 dark:text-white';
     panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-modal', 'true'); panel.tabIndex = -1;
     panel.dataset.surface = this.surface;
     if (this.surface === 'modal') panel.dataset.size = config.size ?? 'md';

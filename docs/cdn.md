@@ -7,11 +7,11 @@ The AFRICANIES JavaScript Web SDK produces two self-contained browser bundles:
 
 ## Versioned URLs
 
-Production applications must pin an exact published version:
+The coordinated local candidate is `0.1.0`, but it is not a published coordinate until the release gate completes. Production applications must replace `<published-version>` and `<sha384-from-release-manifest>` below with values verified after publication:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@africanies/javascript-web-sdk@1.2.3/dist/africanies-web-sdk.global.js"
-  integrity="sha384-RELEASE_MANIFEST_VALUE" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@africanies/javascript-web-sdk@<published-version>/dist/africanies-web-sdk.global.js"
+  integrity="sha384-<sha384-from-release-manifest>" crossorigin="anonymous"></script>
 ```
 
 Do not use `@latest` in production. Exact-version CDN URLs are suitable for long-lived immutable caching. Consumers should still follow their CDN provider's documented cache semantics and purge behavior.
@@ -26,6 +26,6 @@ Before a release, run:
 npm run artifact:verify
 ```
 
-The verifier builds both bundles, calculates their SHA-384 SRI values, packs all workspace packages, installs the tarballs into a clean temporary npm project, and imports the umbrella package. Record the printed hashes in the immutable release manifest and versioned examples. A hash is valid only for the exact bytes and URL it was generated from.
+The verifier builds both bundles from committed inputs, copies the theme, icon sprite, and playground into the distribution tree, calculates SHA-384 SRI values, packs all workspace packages, installs the tarballs into a clean temporary npm project, and imports the umbrella package. Record the printed hashes in the immutable release manifest and versioned examples. A hash is valid only for the exact bytes and URL it was generated from.
 
 Publishing, tagging, uploading to a CDN, or creating a GitHub release requires explicit owner approval and is never performed by the verification command.
