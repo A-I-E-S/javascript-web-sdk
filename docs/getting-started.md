@@ -10,7 +10,12 @@ npm install @africanies/javascript-web-sdk
 import { createAfricaniesSdk, defineAfricaniesElements } from '@africanies/javascript-web-sdk';
 
 const sdk = createAfricaniesSdk({ baseUrl: 'https://api.example.com' });
-defineAfricaniesElements({ customElements, HTMLElement });
+defineAfricaniesElements({
+  customElements,
+  document,
+  HTMLElement,
+  iconSpriteUrl: '/assets/africanies-icons/icons.sprite.svg'
+});
 const countries = await sdk.apiClient.get('/countries');
 ```
 

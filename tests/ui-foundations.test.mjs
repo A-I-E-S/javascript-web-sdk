@@ -3,6 +3,14 @@ import test from 'node:test';
 
 import { AFRICANIES_UI_ELEMENTS, AlertComponent, AsyncStateComponent, ButtonComponent, ChipComponent, CopyButtonComponent, UI_PACKAGE_NAME, defineAfricaniesElements, resolveAsyncView } from '../packages/ui/dist/index.js';
 
+function createShadowRootStub() {
+  return {
+    innerHTML: '',
+    querySelector: () => null,
+    querySelectorAll: () => []
+  };
+}
+
 test('UI package imports without browser globals and exposes the complete foundation registry', () => {
   assert.equal(UI_PACKAGE_NAME, '@africanies/africanies-ui');
   assert.deepEqual(Object.keys(AFRICANIES_UI_ELEMENTS), [
@@ -49,6 +57,14 @@ test('canonical foundation contracts use Angular public names while retaining le
   assert.ok(ChipComponent.observedAttributes.includes('size'));
   assert.ok(ChipComponent.observedAttributes.includes('remove-label'));
   assert.equal(AFRICANIES_UI_ELEMENTS['africanies-copy'], CopyButtonComponent);
+  const alert = new AlertComponent();
+  const attributes = new Map([['variant', 'success'], ['message', 'Done']]);
+  alert.renderRoot = createShadowRootStub();
+  alert.getAttribute = (name) => attributes.get(name) ?? null;
+  alert.hasAttribute = (name) => attributes.has(name);
+  alert.render();
+  assert.match(alert.renderRoot.innerHTML, /africanies-icon/);
+  assert.match(alert.renderRoot.innerHTML, /name="check-circle"/);
 });
 
 test('async state branch precedence matches the canonical Angular wrapper', () => {

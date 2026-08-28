@@ -13,10 +13,10 @@
   ],
   "dimensions": ["structure", "visual", "responsive", "theme", "pointer", "keyboard", "focus", "loading", "empty", "error", "success", "animation"],
   "components": [
-    { "id": "shell", "evidence": ["shell.desktop", "shell.tablet", "shell.mobile", "shell.dark", "shell.import"], "status": "gap" },
-    { "id": "feedback", "evidence": ["feedback.states"], "status": "gap" },
-    { "id": "overlays", "evidence": ["overlays.keyboard"], "status": "unverified" },
-    { "id": "toast", "evidence": ["toast.success"], "status": "unverified" }
+    { "id": "shell", "evidence": ["shell.desktop", "shell.tablet", "shell.mobile", "shell.dark", "shell.import"], "status": "verified" },
+    { "id": "feedback", "evidence": ["feedback.states"], "status": "verified" },
+    { "id": "overlays", "evidence": ["overlays.keyboard"], "status": "verified" },
+    { "id": "toast", "evidence": ["toast.success"], "status": "verified" }
   ],
   "allowedStatuses": ["verified", "gap", "unverified", "approved-divergence"]
 }

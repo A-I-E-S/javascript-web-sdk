@@ -20,17 +20,63 @@ const HTMLElementBase: HTMLElementConstructor = (globalThis.HTMLElement ?? class
 const esc = (value: unknown): string => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 abstract class MiscElement extends HTMLElementBase { protected root: ShadowRoot | null = null; connectedCallback(): void { if (!this.root && typeof this.attachShadow === 'function') this.root = this.attachShadow({ mode: 'open' }); this.render(); } attributeChangedCallback(name: string, previous: string | null, value: string | null): void { void name; void previous; void value; this.render(); } protected abstract render(): void; protected html(value: string): void { if (this.root) this.root.innerHTML = withAfricaniesShadowStyles(value); } }
 
-export interface ActionMenuItem { id: string; label: string; disabled?: boolean; danger?: boolean; }
+export interface ActionMenuItem {
+  id?: string;
+  label: string;
+  onClick?: () => void;
+  icon?: string;
+  routerLink?: string | readonly unknown[];
+  queryParams?: Record<string, unknown>;
+  fragment?: string;
+  disabled?: boolean;
+  danger?: boolean;
+  dividerBefore?: boolean;
+}
+export type AfricaniesMenuItem = ActionMenuItem;
 export class ActionMenuComponent extends MiscElement {
-  #items: readonly ActionMenuItem[] = []; #open = false;
-  #click = (event: Event): void => { const target = (event.target as Element).closest?.('[data-action]') as HTMLElement | null; if (!target) return; this.dispatchEvent(new CustomEvent('action-select', { bubbles: true, composed: true, detail: { id: target.dataset.action } })); this.open = false; };
-  #keydown = (event: KeyboardEvent): void => { if (event.key === 'Escape') { this.open = false; return; } const items = [...(this.root?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [])]; if (!['ArrowDown', 'ArrowUp'].includes(event.key) || items.length === 0) return; event.preventDefault(); const current = items.indexOf(this.root?.activeElement as HTMLElement); items[(current + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length]?.focus(); };
-  set items(value: readonly ActionMenuItem[]) { this.#items = value; this.render(); } set open(value: boolean) { this.#open = value; this.render(); } get open(): boolean { return this.#open; }
+  static readonly observedAttributes = ['aria-label', 'disabled', 'open'];
+  #items: readonly ActionMenuItem[] = [];
+  #open = false;
+  #click = (event: Event): void => {
+    const target = (event.target as Element).closest?.('[data-menu-index]') as HTMLElement | null;
+    if (!target) return;
+    const index = Number(target.dataset.menuIndex);
+    const item = this.#items[index];
+    if (!item || item.disabled) return;
+    if (typeof globalThis.CustomEvent === 'function') {
+      this.dispatchEvent(new CustomEvent('action-select', { bubbles: true, composed: true, detail: { id: item.id ?? String(index), item } }));
+    }
+    if (isPrimaryActivation(event)) item.onClick?.();
+    if (!isModifiedClick(event)) this.open = false;
+  };
+  #keydown = (event: KeyboardEvent): void => {
+    if (event.key === 'Escape') { this.open = false; return; }
+    const items = [...(this.root?.querySelectorAll<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"]):not([disabled])') ?? [])];
+    if (!['ArrowDown', 'ArrowUp'].includes(event.key) || items.length === 0) return;
+    event.preventDefault();
+    const current = items.indexOf(this.root?.activeElement as HTMLElement);
+    items[(current + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length]?.focus();
+  };
+  set items(value: readonly ActionMenuItem[]) { this.#items = value; this.render(); }
+  set open(value: boolean) { this.#open = value; this.toggleAttribute?.('open', value); this.render(); }
+  get open(): boolean { return this.#open; }
+  get disabled(): boolean { return this.hasAttribute?.('disabled') ?? false; }
+  get ariaLabel(): string { return this.getAttribute?.('aria-label') ?? 'Actions'; }
   connectedCallback(): void { super.connectedCallback(); this.root?.addEventListener('click', this.#click); this.addEventListener('keydown', this.#keydown); }
   disconnectedCallback(): void { this.root?.removeEventListener('click', this.#click); this.removeEventListener('keydown', this.#keydown); }
-  protected render(): void { this.html(`<div role="menu"${this.#open ? '' : ' hidden'}>${this.#items.map(item => `<button role="menuitem" data-action="${esc(item.id)}"${item.disabled ? ' disabled' : ''}${item.danger ? ' data-danger="true"' : ''}>${esc(item.label)}</button>`).join('')}</div>`); }
+  protected render(): void {
+    this.#open = this.hasAttribute?.('open') ?? this.#open;
+    const items = this.#items.map((item, index) => {
+      const href = actionMenuItemHref(item);
+      const leading = item.icon ? `<africanies-icon name="${esc(item.icon)}" size="16"></africanies-icon>` : '';
+      const body = `${item.dividerBefore ? '<div role="separator"></div>' : ''}${href ? `<a role="menuitem" data-menu-index="${index}" href="${esc(href)}"${item.disabled ? ' aria-disabled="true" tabindex="-1"' : ''}${item.danger ? ' data-danger="true"' : ''}>${leading}<span>${esc(item.label)}</span></a>` : `<button type="button" role="menuitem" data-menu-index="${index}"${item.disabled ? ' disabled aria-disabled="true"' : ''}${item.danger ? ' data-danger="true"' : ''}>${leading}<span>${esc(item.label)}</span></button>`}`;
+      return body;
+    }).join('');
+    this.html(`<div part="menu" role="menu" aria-label="${esc(this.ariaLabel)}"${this.#open ? '' : ' hidden'}>${items}</div>`);
+    if (this.#open) queueMicrotask(() => this.root?.querySelector<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"]):not([disabled])')?.focus());
+  }
 }
-export class ActionMenuTriggerComponent extends MiscElement { #click = (): void => { this.dispatchEvent(new CustomEvent('menu-toggle', { bubbles: true, composed: true })); }; connectedCallback(): void { super.connectedCallback(); this.root?.addEventListener('click', this.#click); } disconnectedCallback(): void { this.root?.removeEventListener('click', this.#click); } protected render(): void { this.html('<button part="trigger" type="button" aria-haspopup="menu"><slot></slot></button>'); } }
+export class ActionMenuTriggerComponent extends MiscElement { static readonly observedAttributes = ['disabled']; #click = (): void => { this.dispatchEvent(new CustomEvent('menu-toggle', { bubbles: true, composed: true })); }; connectedCallback(): void { super.connectedCallback(); this.root?.addEventListener('click', this.#click); } disconnectedCallback(): void { this.root?.removeEventListener('click', this.#click); } protected render(): void { this.html(`<button part="trigger" type="button" aria-haspopup="menu"${this.hasAttribute?.('disabled') ? ' disabled aria-disabled="true"' : ''}><slot></slot></button>`); } }
 
 export class AvatarComponent extends MiscElement { static readonly observedAttributes = ['src', 'name', 'size']; protected render(): void { const src = this.getAttribute('src'); const name = this.getAttribute('name') ?? ''; const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]).join('').toUpperCase(); this.html(`<span part="avatar" data-size="${esc(this.getAttribute('size') ?? 'medium')}" role="img" aria-label="${esc(name || 'User')}">${src ? `<img src="${esc(src)}" alt="">` : esc(initials || '?')}</span>`); } }
 export class AvatarMenuComponent extends ActionMenuComponent {}
@@ -69,6 +115,21 @@ export type CarrierLogoSlug = 'dhl';
 export const AFRICANIES_BRAND_LOGO_URL = '/assets/africanies/brand-logo.svg';
 export const AFRICANIES_BRAND_LOGO_MINI_URL = '/assets/africanies/brand-logo-mini.svg';
 export function normalizeCarrierLogoSlug(value: string | null | undefined): CarrierLogoSlug | null { return value?.trim().toLowerCase() === 'dhl' ? 'dhl' : null; }
+
+const actionMenuItemHref = (item: ActionMenuItem): string => {
+  const base = typeof item.routerLink === 'string'
+    ? item.routerLink
+    : Array.isArray(item.routerLink)
+      ? `/${item.routerLink.map(part => String(part ?? '').replace(/^\/+|\/+$/g, '')).filter(Boolean).join('/')}`
+      : '';
+  if (!base) return '';
+  const resolved = new URL(base, 'https://africanies.local');
+  for (const [key, value] of Object.entries(item.queryParams ?? {})) if (value != null && value !== '') resolved.searchParams.set(key, String(value));
+  if (item.fragment) resolved.hash = item.fragment;
+  return `${resolved.pathname}${resolved.search}${resolved.hash}`;
+};
+const isModifiedClick = (event: Event): boolean => typeof MouseEvent === 'function' && event instanceof MouseEvent && (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey);
+const isPrimaryActivation = (event: Event): boolean => !(typeof MouseEvent === 'function' && event instanceof MouseEvent) || event.button === 0;
 
 const DELIVERY_VENDOR_ROWS = Object.freeze([{ id: 'amazon', name: 'Amazon' }, { id: 'dhl', name: 'DHL' }, { id: 'fedex', name: 'FedEx' }, { id: 'usps', name: 'USPS' }, { id: 'ups', name: 'UPS' }, { id: 'others', name: 'Others' }]);
 export function deliveryVendorSelectOptions(includeWalkIn = false): Array<{ value: string; label: string }> { const rows = includeWalkIn ? [...DELIVERY_VENDOR_ROWS, { id: 'walk-in', name: 'Walk-In' }] : DELIVERY_VENDOR_ROWS; return rows.map(row => ({ value: row.id, label: row.name })); }
@@ -289,8 +350,10 @@ export class FilterDrawerComponent extends MiscElement {
     this.root?.querySelectorAll<HTMLInputElement>('[data-bind="search"],[data-bind="from"],[data-bind="to"]').forEach((input) => input.addEventListener('input', () => {
       const key = input.dataset.bind as 'search' | 'from' | 'to';
       this.#draft = { ...this.#draft, [key]: input.value || undefined };
-      if (key === 'from' && this.#draft.to && input.value && this.#draft.to < input.value) this.#draft.to = undefined;
-      if (key === 'to' && this.#draft.from && input.value && this.#draft.from > input.value) this.#draft.from = undefined;
+      let normalized = false;
+      if (key === 'from' && this.#draft.to && input.value && this.#draft.to < input.value) { this.#draft.to = undefined; normalized = true; }
+      if (key === 'to' && this.#draft.from && input.value && this.#draft.from > input.value) { this.#draft.from = undefined; normalized = true; }
+      if (normalized) this.render();
     }));
     this.root?.querySelectorAll<HTMLSelectElement>('[data-bind="date"],[data-bind="order"]').forEach((select) => select.addEventListener('change', () => {
       const key = select.dataset.bind as 'date' | 'order';

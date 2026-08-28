@@ -1,0 +1,1 @@
+{"version":3,"file":"api-json.model.d.ts","sourceRoot":"","sources":["api-json.model.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AAEH,gDAAgD;AAChD,MAAM,MAAM,gBAAgB,GAAG,MAAM,GAAG,MAAM,GAAG,OAAO,GAAG,IAAI,CAAC;AAEhE;;;GAGG;AACH,MAAM,WAAW,kBAAkB;IACjC,QAAQ,EAAE,GAAG,EAAE,MAAM,GAAG,YAAY,CAAC;CACtC;AAED;;GAEG;AACH,MAAM,MAAM,YAAY,GACpB,gBAAgB,GAChB,SAAS,YAAY,EAAE,GACvB,kBAAkB,CAAC"}

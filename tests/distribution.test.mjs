@@ -10,6 +10,8 @@ test('public package manifests carry coordinated releasable metadata', async () 
     const manifest = JSON.parse(await readFile(`packages/${name}/package.json`, 'utf8'));
     assert.equal(manifest.version, releaseVersion, `${name} version`);
     assert.equal(manifest.publishConfig?.access, 'public', `${name} public access`);
+    assert.equal(manifest.main, './dist/index.js', `${name} main`);
+    assert.equal(manifest.types, './dist/index.d.ts', `${name} types`);
     assert.ok(manifest.files.includes('README.md'), `${name} README allow-list`);
     assert.ok(manifest.files.includes('LICENSE'), `${name} license allow-list`);
     assert.ok(manifest.files.includes('!dist/.tsbuildinfo'), `${name} tsbuildinfo exclusion`);

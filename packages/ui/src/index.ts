@@ -1,5 +1,5 @@
 /** Public entry point for AFRICANIES custom elements and UI services. */
-import type { ToastItem, ToastService } from './toast.js';
+import { TOAST_ICONS, type ToastItem, type ToastService } from './toast.js';
 import { AFRICANIES_FORM_ELEMENTS } from './forms.js';
 import { AFRICANIES_NAVIGATION_DATA_ELEMENTS } from './navigation-data.js';
 import { AFRICANIES_MISC_ELEMENTS } from './misc.js';
@@ -41,6 +41,9 @@ abstract class AfricaniesElement extends HTMLElementBase {
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'ghost-primary' | 'ghost-danger' | 'underline' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ChipVariant = 'neutral' | 'success' | 'warning' | 'danger' | 'export' | 'import';
+export type ChipSize = 'sm' | 'md';
+const DEFAULT_ALERT_ICONS = Object.freeze({ info: 'info-circle', success: 'check-circle', warning: 'warning', danger: 'warning' } as const);
 
 export class ButtonComponent extends AfricaniesElement {
   static readonly observedAttributes = ['disabled', 'loading', 'type', 'variant', 'size', 'aria-label'];
@@ -188,8 +191,9 @@ export class AlertComponent extends AfricaniesElement {
     const role = variant === 'danger' || variant === 'warning' ? 'alert' : 'status';
     const heading = this.getAttribute('title') ?? this.getAttribute('heading');
     const message = this.getAttribute('message') ?? '';
+    const icon = this.getAttribute('icon') ?? DEFAULT_ALERT_ICONS[(variant === 'danger' || variant === 'warning' || variant === 'success') ? variant : 'info'];
     const dismissible = !this.hasAttribute('dismissible') || this.getAttribute('dismissible') !== 'false';
-    this.setMarkup(`<section part="alert" data-variant="${escapeHtml(variant)}" role="${role}" aria-live="${role === 'alert' ? 'assertive' : 'polite'}">${heading ? `<strong part="heading">${escapeHtml(heading)}</strong>` : ''}<div part="content">${escapeHtml(message)}<slot></slot></div>${dismissible ? '<button part="dismiss" type="button" aria-label="Dismiss">×</button>' : ''}</section>`);
+    this.setMarkup(`<section part="alert" data-variant="${escapeHtml(variant)}" role="${role}" aria-live="${role === 'alert' ? 'assertive' : 'polite'}"><africanies-icon part="icon" name="${escapeHtml(icon)}" size="20"></africanies-icon><div part="content">${heading ? `<strong part="heading">${escapeHtml(heading)}</strong>` : ''}${message ? `<p part="message">${escapeHtml(message)}</p>` : ''}<slot></slot></div>${dismissible ? '<button part="dismiss" type="button" aria-label="Dismiss">×</button>' : ''}</section>`);
     this.#dismiss = this.renderRoot?.querySelector('[part="dismiss"]') ?? null;
     this.#dismiss?.addEventListener('click', this.#onDismiss);
   }
@@ -236,7 +240,8 @@ export class ToastItemComponent extends AfricaniesElement {
     this.#unbind(); const item = this.#item; if (!item) { this.setMarkup(''); return; }
     const role = item.variant === 'warning' || item.variant === 'danger' ? 'alert' : 'status';
     const live = role === 'alert' ? 'assertive' : 'polite';
-    const copies = item.expanded && item.count > 1 ? Array.from({ length: item.count }, (_, index) => `<article part="toast" data-variant="${item.variant}"${index === 0 ? ` role="${role}" aria-live="${live}"` : ''}>${item.title ? `<strong part="title">${escapeHtml(item.title)}</strong>` : ''}<p part="message">${escapeHtml(item.message)}</p><button part="dismiss" type="button" aria-label="Dismiss">×</button></article>`).join('') : `<article part="toast" data-variant="${item.variant}" role="${role}" aria-live="${live}">${item.title ? `<strong part="title">${escapeHtml(item.title)}</strong>` : ''}<p part="message">${escapeHtml(item.message)}</p>${item.count > 1 ? `<span part="count" aria-label="${item.count} identical notifications">×${item.count}</span>` : ''}<button part="dismiss" type="button" aria-label="${item.count > 1 ? 'Dismiss outermost' : 'Dismiss'}">×</button></article>`;
+    const icon = escapeHtml(item.icon ?? TOAST_ICONS[item.variant]);
+    const copies = item.expanded && item.count > 1 ? Array.from({ length: item.count }, (_, index) => `<article part="toast" data-variant="${item.variant}"${index === 0 ? ` role="${role}" aria-live="${live}"` : ''}><africanies-icon part="icon" name="${icon}" size="18"></africanies-icon><div part="content">${item.title ? `<strong part="title">${escapeHtml(item.title)}</strong>` : ''}<p part="message">${escapeHtml(item.message)}</p></div><button part="dismiss" type="button" aria-label="Dismiss">×</button></article>`).join('') : `<article part="toast" data-variant="${item.variant}" role="${role}" aria-live="${live}"><africanies-icon part="icon" name="${icon}" size="18"></africanies-icon><div part="content">${item.title ? `<strong part="title">${escapeHtml(item.title)}</strong>` : ''}<p part="message">${escapeHtml(item.message)}</p></div>${item.count > 1 ? `<span part="count" aria-label="${item.count} identical notifications">×${item.count}</span>` : ''}<button part="dismiss" type="button" aria-label="${item.count > 1 ? 'Dismiss outermost' : 'Dismiss'}">×</button></article>`;
     const actions = item.count > 1 ? `<div part="stack-actions"><button part="toggle-stack" type="button">${item.expanded ? 'Collapse' : 'Expand'}</button><button part="dismiss-all" type="button">Close all</button></div>` : '';
     this.setMarkup(`${copies}${actions}`);
     this.#dismiss = this.renderRoot?.querySelector('[part="dismiss"]') ?? null;
