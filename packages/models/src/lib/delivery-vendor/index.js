@@ -1,2 +1,0 @@
-export { BOX_DELIVERY_VENDORS, DELIVERY_VENDOR_OPTIONS, DELIVERY_VENDORS, deliveryVendorLabel, EXPORT_DELIVERY_VENDORS, isKnownDeliveryVendor, normalizeDeliveryVendor, normalizeDeliveryVendorForForm, } from './delivery-vendor.js';
-//# sourceMappingURL=index.js.map
