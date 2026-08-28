@@ -1,3 +1,18 @@
+import type {
+  FilterFieldModel,
+  FilterOptionModel,
+  FilterStateModel,
+  ModuleFilterConfigModel,
+} from '../../models/dist/index.js';
+import {
+  cloneFilterState,
+  emptyFilterState,
+  filterQueryKeys,
+  fromFilterParams,
+  hasFilterParams,
+  resetFilterState,
+  toFilterParams,
+} from '../../models/dist/index.js';
 import type { DrawerService, AfricaniesOverlayRef } from './overlay.js';
 import { withAfricaniesShadowStyles } from './styles.js';
 type HTMLElementConstructor = typeof HTMLElement;
@@ -117,21 +132,217 @@ export class NotificationDrawerService<T = unknown> {
 export class NotificationDrawerComponent<T = unknown> extends MiscElement { adapter: NotificationAdapter<T> | null = null; #items: T[] = []; #page = 0; #loading = false; async loadMore(): Promise<void> { if (!this.adapter || this.#loading) return; this.#loading = true; this.render(); try { const page = await this.adapter.list(this.#page + 1); this.#page += 1; this.#items.push(...page.data); } finally { this.#loading = false; this.render(); } } protected render(): void { this.html(`<section aria-label="Notifications" aria-busy="${this.#loading}"><slot name="header"></slot><div part="items">${this.#items.map(item => `<div part="item">${esc(JSON.stringify(item))}</div>`).join('')}</div><button type="button" part="load-more"${this.#loading ? ' disabled' : ''}>Load more</button></section>`); this.root?.querySelector('[part="load-more"]')?.addEventListener('click', () => void this.loadMore()); } }
 export class NotificationDrawerPanel<T = unknown> extends NotificationDrawerComponent<T> { close(): void { this.dispatchEvent(new CustomEvent('panel-close', { bubbles: true, composed: true })); } }
 
-export class FilterQueryService { constructor(private readonly history?: History, private readonly location?: Location) {} read(): Record<string, string> { return Object.fromEntries(new URLSearchParams(this.location?.search ?? '')); } write(values: Record<string, unknown>, replace = true): void { const query = new URLSearchParams(); for (const [key, value] of Object.entries(values)) if (value != null && value !== '') query.set(key, String(value)); const url = `${this.location?.pathname ?? ''}${query.size ? `?${query}` : ''}`; if (replace) this.history?.replaceState(null, '', url); else this.history?.pushState(null, '', url); } clear(): void { this.write({}); } }
-export interface FilterResolverAdapter { resolve(config: unknown): Promise<unknown>; }
-export interface FilterDrawerData { config: unknown; initial?: Record<string, unknown>; }
-export type FilterDrawerResult = Record<string, unknown>;
-export class FilterDrawerService { constructor(private readonly drawer: DrawerService, private readonly query: FilterQueryService, private readonly resolver?: FilterResolverAdapter) {} open(config: unknown): AfricaniesOverlayRef<Record<string, unknown>> { return this.drawer.open(({ document, ref }) => { const panel = document.createElement('africanies-filter-drawer') as FilterDrawerComponent; panel.initial = this.query.read(); panel.resolveOptions = () => this.resolver?.resolve(config) ?? Promise.resolve(undefined); panel.addEventListener('filter-apply', event => { const values = (event as CustomEvent<Record<string, unknown>>).detail; this.query.write(values); ref.close(values); }); return panel; }, { dismissible: true }); } }
-export class FilterDrawerComponent extends MiscElement {
-  initial: Record<string, unknown> = {};
-  resolveOptions: (() => Promise<unknown>) | null = null;
-  apply(values: Record<string, unknown> = this.initial): void { this.dispatchEvent(new CustomEvent('filter-apply', { bubbles: true, composed: true, detail: values })); }
-  protected render(): void {
-    this.html('<section aria-label="Filters"><slot></slot><div part="actions"><button type="button" data-action="clear">Clear</button><button type="button" data-action="apply">Apply</button></div></section>');
-    this.root?.querySelector('[data-action="clear"]')?.addEventListener('click', () => this.apply({}));
-    this.root?.querySelector('[data-action="apply"]')?.addEventListener('click', () => this.apply());
+export class FilterQueryService {
+  constructor(private readonly history?: History, private readonly location?: Location) {}
+  private snapshot(): Record<string, string> {
+    return Object.fromEntries(new URLSearchParams(this.location?.search ?? ''));
+  }
+  private urlFrom(values: Record<string, unknown>): string {
+    const query = new URLSearchParams();
+    for (const [key, value] of Object.entries(values)) if (value != null && value !== '') query.set(key, String(value));
+    return `${this.location?.pathname ?? ''}${query.size ? `?${query}` : ''}${this.location?.hash ?? ''}`;
+  }
+  hasParams(config?: ModuleFilterConfigModel): boolean {
+    const values = this.snapshot();
+    return config ? hasFilterParams(values, config) : Object.keys(values).length > 0;
+  }
+  read(config?: ModuleFilterConfigModel): FilterStateModel | Record<string, string> {
+    const values = this.snapshot();
+    return config ? fromFilterParams(values, config) : values;
+  }
+  write(state: FilterStateModel | Record<string, unknown>, configOrReplace?: ModuleFilterConfigModel | boolean, replace = true): void {
+    if (typeof configOrReplace === 'boolean') {
+      const values = state as Record<string, unknown>;
+      (configOrReplace ? this.history?.replaceState : this.history?.pushState)?.call(this.history, null, '', this.urlFrom(values));
+      return;
+    }
+    const config = configOrReplace;
+    if (!config) {
+      this.history?.replaceState(null, '', this.urlFrom(state as Record<string, unknown>));
+      return;
+    }
+    const next: Record<string, unknown> = { ...this.snapshot() };
+    for (const key of filterQueryKeys(config)) delete next[key];
+    for (const [key, value] of Object.entries(toFilterParams(state as FilterStateModel, config))) if (value != null && value !== '') next[key] = value;
+    (replace ? this.history?.replaceState : this.history?.pushState)?.call(this.history, null, '', this.urlFrom(next));
+  }
+  clear(config?: ModuleFilterConfigModel): void {
+    if (!config) {
+      this.history?.replaceState(null, '', this.urlFrom({}));
+      return;
+    }
+    const next: Record<string, unknown> = { ...this.snapshot() };
+    for (const key of filterQueryKeys(config)) delete next[key];
+    this.history?.replaceState(null, '', this.urlFrom(next));
+  }
+  setPage(page: number, config?: ModuleFilterConfigModel): void {
+    const next: Record<string, unknown> = { ...this.snapshot(), [(config?.pagination?.pageParam ?? 'page')]: page };
+    this.history?.replaceState(null, '', this.urlFrom(next));
+  }
+  setSize(size: number, config?: ModuleFilterConfigModel): void {
+    const pageKey = config?.pagination?.pageParam ?? 'page';
+    const sizeKey = config?.pagination?.sizeParam ?? 'size';
+    const next: Record<string, unknown> = { ...this.snapshot(), [pageKey]: 1, [sizeKey]: size };
+    this.history?.replaceState(null, '', this.urlFrom(next));
   }
 }
-export class FilterDrawerPanel extends FilterDrawerComponent { reset(): void { this.initial = {}; this.apply({}); } close(): void { this.dispatchEvent(new CustomEvent('panel-close', { bubbles: true, composed: true })); } }
+export interface FilterResolverAdapter { resolve(config: unknown): Promise<unknown>; }
+export interface FilterDrawerData { config: ModuleFilterConfigModel; state?: FilterStateModel; title?: string; optionLists?: Record<string, FilterOptionModel[]>; }
+export interface FilterDrawerResult { applied: boolean; state: FilterStateModel; params: Record<string, string | number | undefined>; }
+export class FilterDrawerService {
+  constructor(private readonly drawer: DrawerService, private readonly query: FilterQueryService, private readonly resolver?: FilterResolverAdapter) {}
+  open(configOrData: ModuleFilterConfigModel | FilterDrawerData): AfricaniesOverlayRef<FilterDrawerResult> {
+    const data = ('config' in configOrData ? configOrData : { config: configOrData }) as FilterDrawerData;
+    return this.drawer.open(({ document, ref }) => {
+      const panel = document.createElement('africanies-filter-drawer') as FilterDrawerComponent;
+      const config = data.config;
+      panel.config = config;
+      panel.heading = data.title ?? 'Filters';
+      panel.state = this.query.hasParams(config) ? this.query.read(config) as FilterStateModel : cloneFilterState(data.state);
+      panel.optionLists = data.optionLists ?? awaitableResolvedOptions(this.resolver, config);
+      panel.addEventListener('panel-close', () => ref.close());
+      panel.addEventListener('filter-apply', event => {
+        const detail = (event as CustomEvent<FilterDrawerResult | Record<string, unknown>>).detail;
+        if (isFilterDrawerResult(detail)) {
+          this.query.write({ ...detail.state, page: 1 }, config);
+          ref.close({ applied: true, state: { ...detail.state, page: 1 }, params: toFilterParams({ ...detail.state, page: 1 }, config) });
+          return;
+        }
+        ref.close();
+      });
+      return panel;
+    }, { dismissible: true });
+  }
+}
+const isFilterDrawerResult = (value: unknown): value is FilterDrawerResult => typeof value === 'object' && value != null && 'state' in value && 'params' in value;
+const awaitableResolvedOptions = (resolver: FilterResolverAdapter | undefined, config: ModuleFilterConfigModel): Promise<Record<string, FilterOptionModel[]> | undefined> => Promise.resolve(resolver?.resolve(config) as Promise<Record<string, FilterOptionModel[]> | undefined> | Record<string, FilterOptionModel[]> | undefined);
+export class FilterDrawerComponent extends MiscElement {
+  initial: Record<string, unknown> | null = null;
+  config: ModuleFilterConfigModel | null = null;
+  heading = 'Filters';
+  state: FilterStateModel = emptyFilterState();
+  optionLists: Promise<Record<string, FilterOptionModel[]> | undefined> | Record<string, FilterOptionModel[]> | undefined = undefined;
+  #draft: FilterStateModel = emptyFilterState();
+  #selectedKeys = new Set<string>();
+  #loadedOptionLists: Record<string, FilterOptionModel[]> = {};
+  apply(state: FilterStateModel = this.#draft): void {
+    if (!this.config) {
+      this.dispatchEvent(new CustomEvent('filter-apply', { bubbles: true, composed: true, detail: this.initial ?? {} }));
+      return;
+    }
+    this.dispatchEvent(new CustomEvent('filter-apply', { bubbles: true, composed: true, detail: { applied: true, state, params: toFilterParams(state, this.config) } satisfies FilterDrawerResult }));
+  }
+  connectedCallback(): void {
+    this.#draft = cloneFilterState(this.state);
+    this.#selectedKeys = new Set(Object.keys(this.#draft.values).filter(key => this.#draft.values[key]));
+    const optionLists = this.optionLists;
+    if (optionLists && typeof (optionLists as Promise<unknown>).then === 'function') {
+      void (optionLists as Promise<Record<string, FilterOptionModel[]> | undefined>).then((value) => { this.#loadedOptionLists = value ?? {}; this.render(); });
+    } else {
+      this.#loadedOptionLists = (optionLists as Record<string, FilterOptionModel[]> | undefined) ?? {};
+    }
+    super.connectedCallback();
+  }
+  protected render(): void {
+    if (!this.config) {
+      this.html('<section aria-label="Filters"><slot></slot><div part="actions"><button type="button" data-action="clear">Clear</button><button type="button" data-action="apply">Apply</button></div></section>');
+      this.root?.querySelector('[data-action="clear"]')?.addEventListener('click', () => { this.initial = {}; this.apply(); });
+      this.root?.querySelector('[data-action="apply"]')?.addEventListener('click', () => this.apply());
+      return;
+    }
+    const search = this.config.search ? `<div part="field"><label for="filter-search">${esc(this.config.search.label)}</label><input id="filter-search" data-bind="search" value="${esc(this.#draft.search ?? '')}" placeholder="${esc(this.config.search.placeholder ?? '')}"></div>` : '';
+    const date = this.config.date ? `<section part="group"><div part="group-head"><strong>Date</strong><button type="button" data-action="clear-date">Clear</button></div><label for="filter-date-field">Field</label><select id="filter-date-field" data-bind="date">${['<option value=""></option>', ...(this.config.date.fields ?? []).map((option: FilterOptionModel) => `<option value="${esc(option.value)}"${this.#draft.date === option.value ? ' selected' : ''}>${esc(option.label)}</option>`)].join('')}</select><div part="inline-grid"><div><label for="filter-from">From</label><input id="filter-from" type="date" data-bind="from" value="${esc(this.#draft.from ?? '')}" max="${esc(this.#draft.to ?? '')}"></div><div><label for="filter-to">To</label><input id="filter-to" type="date" data-bind="to" value="${esc(this.#draft.to ?? '')}" min="${esc(this.#draft.from ?? '')}"></div></div></section>` : '';
+    const sort = this.config.sort ? `<div part="field"><label for="filter-sort">Sort</label><select id="filter-sort" data-bind="order">${(this.config.sort.options ?? []).map((option: FilterOptionModel) => `<option value="${esc(option.value)}"${this.#draft.order === option.value ? ' selected' : ''}>${esc(option.label)}</option>`).join('')}</select></div>` : '';
+    const filterBy = this.config.fields.length ? `<fieldset part="group"><legend>Filter by</legend><div part="checkbox-list">${this.config.fields.map((field: FilterFieldModel) => `<label part="checkbox"><input type="checkbox" data-filter-key="${esc(field.key)}"${this.#selectedKeys.has(field.key) ? ' checked' : ''}> <span>${esc(field.label)}</span></label>`).join('')}</div></fieldset>` : '';
+    const fieldMarkup = [...this.#selectedKeys].map((key) => {
+      const field = this.config?.fields.find((item: FilterFieldModel) => item.key === key);
+      if (!field) return '';
+      return `<section part="group"><div part="group-head"><strong>${esc(field.label)}</strong><button type="button" data-action="clear-field" data-key="${esc(field.key)}">Clear</button></div>${renderFieldControl(field, this.#draft, this.#loadedOptionLists[field.key])}</section>`;
+    }).join('');
+    this.html(`<section aria-label="Filters"><style>
+      section[aria-label="Filters"]{display:flex;min-height:100%;flex-direction:column}
+      [part="header"]{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;padding:1.5rem 1.5rem 1rem;border-bottom:1px solid var(--africanies-border,#d8dde7)}
+      [part="body"]{display:flex;min-height:0;flex:1;flex-direction:column;gap:1rem;overflow:auto;padding:1.25rem 1.5rem}
+      [part="field"],[part="group"]{display:flex;flex-direction:column;gap:.5rem}
+      [part="group"]{padding-top:1rem;border-top:1px solid var(--africanies-border,#d8dde7)}
+      [part="group-head"]{display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+      [part="checkbox-list"]{display:grid;gap:.5rem}
+      [part="checkbox"]{display:flex;align-items:center;gap:.5rem;font-weight:400;margin:0}
+      [part="checkbox"] input{width:auto}
+      [part="inline-grid"]{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
+      [part="enum-list"]{display:flex;flex-wrap:wrap;gap:.5rem}
+      [part="enum-option"][data-selected="true"]{border-color:var(--africanies-export,#1cbd5d);background:rgba(28,189,93,.08);color:var(--africanies-export,#1cbd5d);font-weight:600}
+      [part="footer"]{display:flex;gap:.75rem;padding:1rem 1.5rem;border-top:1px solid var(--africanies-border,#d8dde7);background:var(--africanies-surface,#fff)}
+      [part="footer"] button{flex:1}
+      @media (max-width:640px){[part="inline-grid"]{grid-template-columns:1fr}}
+    </style><div part="header"><div><p style="margin:0 0 .25rem;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--africanies-muted,#667085)">Filters</p><h2 style="margin:0;font-size:1.25rem">${esc(this.heading)}</h2></div><button type="button" data-action="close" part="dismiss" aria-label="Close">×</button></div><div part="body">${search}${date}${sort}${filterBy}${fieldMarkup}</div><div part="footer actions"><button type="button" data-action="reset">Reset</button><button type="button" data-action="apply">Apply</button></div></section>`);
+    this.root?.querySelector('[data-action="close"]')?.addEventListener('click', () => this.dispatchEvent(new CustomEvent('panel-close', { bubbles: true, composed: true })));
+    this.root?.querySelector('[data-action="reset"]')?.addEventListener('click', () => {
+      this.#draft = resetFilterState(false, this.#draft);
+      this.#selectedKeys.clear();
+      this.render();
+    });
+    this.root?.querySelector('[data-action="clear-date"]')?.addEventListener('click', () => {
+      this.#draft = { ...this.#draft, date: undefined, from: undefined, to: undefined };
+      this.render();
+    });
+    this.root?.querySelectorAll<HTMLInputElement>('[data-bind="search"],[data-bind="from"],[data-bind="to"]').forEach((input) => input.addEventListener('input', () => {
+      const key = input.dataset.bind as 'search' | 'from' | 'to';
+      this.#draft = { ...this.#draft, [key]: input.value || undefined };
+      if (key === 'from' && this.#draft.to && input.value && this.#draft.to < input.value) this.#draft.to = undefined;
+      if (key === 'to' && this.#draft.from && input.value && this.#draft.from > input.value) this.#draft.from = undefined;
+    }));
+    this.root?.querySelectorAll<HTMLSelectElement>('[data-bind="date"],[data-bind="order"]').forEach((select) => select.addEventListener('change', () => {
+      const key = select.dataset.bind as 'date' | 'order';
+      this.#draft = { ...this.#draft, [key]: select.value || undefined };
+    }));
+    this.root?.querySelectorAll<HTMLInputElement>('[data-filter-key]').forEach((input) => input.addEventListener('change', () => {
+      const key = input.dataset.filterKey;
+      if (!key) return;
+      if (input.checked) this.#selectedKeys.add(key);
+      else {
+        this.#selectedKeys.delete(key);
+        const nextValues = { ...this.#draft.values };
+        delete nextValues[key];
+        this.#draft = { ...this.#draft, values: nextValues };
+      }
+      this.render();
+    }));
+    this.root?.querySelectorAll<HTMLElement>('[data-action="clear-field"]').forEach((button) => button.addEventListener('click', () => {
+      const key = button.getAttribute('data-key');
+      if (!key) return;
+      const nextValues = { ...this.#draft.values };
+      delete nextValues[key];
+      this.#draft = { ...this.#draft, values: nextValues };
+      this.render();
+    }));
+    this.root?.querySelectorAll<HTMLInputElement>('[data-field-text]').forEach((input) => input.addEventListener('input', () => {
+      const key = input.dataset.fieldText;
+      if (!key) return;
+      this.#draft = { ...this.#draft, values: { ...this.#draft.values, [key]: input.value || undefined } };
+    }));
+    this.root?.querySelectorAll<HTMLButtonElement>('[data-field-enum]').forEach((button) => button.addEventListener('click', () => {
+      const key = button.dataset.fieldEnum;
+      const value = button.dataset.value;
+      if (!key || !value) return;
+      this.#draft = { ...this.#draft, values: { ...this.#draft.values, [key]: value } };
+      this.render();
+    }));
+    this.root?.querySelectorAll<HTMLSelectElement>('[data-field-select]').forEach((select) => select.addEventListener('change', () => {
+      const key = select.dataset.fieldSelect;
+      if (!key) return;
+      this.#draft = { ...this.#draft, values: { ...this.#draft.values, [key]: select.value || undefined } };
+    }));
+    this.root?.querySelector('[data-action="apply"]')?.addEventListener('click', () => this.apply({ ...this.#draft, values: { ...this.#draft.values } }));
+  }
+}
+const renderFieldControl = (field: FilterFieldModel, state: FilterStateModel, loaded?: FilterOptionModel[]): string => {
+  const value = state.values[field.key] ?? '';
+  if (field.type === 'text') return `<input data-field-text="${esc(field.key)}" value="${esc(value)}" placeholder="${esc(field.placeholder ?? '')}">`;
+  const options = loaded ?? field.options ?? [];
+  if (field.type === 'enum') return `<div part="enum-list">${options.map((option: FilterOptionModel) => `<button type="button" part="enum-option" data-field-enum="${esc(field.key)}" data-value="${esc(option.value)}" data-selected="${String(value === option.value)}">${esc(option.label)}</button>`).join('')}</div>`;
+  return `<select data-field-select="${esc(field.key)}"><option value="">${esc(field.placeholder ?? 'Select…')}</option>${options.map((option: FilterOptionModel) => `<option value="${esc(option.value)}"${value === option.value ? ' selected' : ''}>${esc(option.label)}</option>`).join('')}</select>`;
+};
+export class FilterDrawerPanel extends FilterDrawerComponent { reset(): void { this.initial = {}; this.state = emptyFilterState(); this.apply(); } close(): void { this.dispatchEvent(new CustomEvent('panel-close', { bubbles: true, composed: true })); } }
 
 export const AFRICANIES_MISC_ELEMENTS = Object.freeze({ 'africanies-action-menu': ActionMenuComponent, 'africanies-action-menu-trigger': ActionMenuTriggerComponent, 'africanies-avatar': AvatarComponent, 'africanies-avatar-menu': AvatarMenuComponent, 'africanies-brand-logo': BrandLogoComponent, 'africanies-image': ImageComponent, 'africanies-image-fallback-frame': ImageFallbackFrameComponent, 'africanies-carrier-logo': CarrierLogoComponent, 'africanies-tooltip': TooltipComponent, 'africanies-info-popover': InfoPopoverComponent, 'africanies-app-shell': AppShellComponent, 'africanies-app-shell-header': AppShellHeaderComponent, 'africanies-app-shell-content-header': AppShellContentHeaderComponent, 'africanies-header': HeaderComponent, 'africanies-content-header': ContentHeaderComponent, 'africanies-notification-drawer': NotificationDrawerPanel, 'africanies-filter-drawer': FilterDrawerPanel });

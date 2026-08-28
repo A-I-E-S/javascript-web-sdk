@@ -6,7 +6,7 @@ const sdkModulePath = '../../../packages/sdk/dist/africanies-web-sdk.esm.js';
 let sdk;
 try {
   sdk = await import(sdkModulePath);
-  sdk.defineAfricaniesElements();
+  sdk.defineAfricaniesElements({ iconSpriteUrl: '/packages/icons/assets/icons.sprite.svg' });
   document.documentElement.dataset.sdk = 'registered';
 } catch {
   document.documentElement.dataset.sdk = 'unavailable';
@@ -15,6 +15,9 @@ try {
 const app = document.querySelector('#app');
 if (!app) throw new Error('Missing #app root');
 app.innerHTML = renderShell();
+document.documentElement.style.height = '100%';
+document.body.style.height = '100%';
+document.body.style.overflow = 'hidden';
 
 const jsonStorage = {
   get(key) {
@@ -39,7 +42,11 @@ const modalService = sdk ? new sdk.ModalService({ document }) : null;
 const drawerService = sdk ? new sdk.DrawerService({ document }) : null;
 const confirmService = sdk ? new sdk.ConfirmService(modalService) : null;
 const filterQueryService = sdk ? new sdk.FilterQueryService(history, location) : null;
-const filterResolver = { resolve: async () => ({ shipment_status: [{ label: 'In process', value: 'in-process' }] }) };
+const filterResolver = {
+  resolve: async (config) => Object.fromEntries((config?.fields ?? [])
+    .filter((field) => Array.isArray(field.options))
+    .map((field) => [field.key, field.options]))
+};
 const filterDrawerService = sdk ? new sdk.FilterDrawerService(drawerService, filterQueryService, filterResolver) : null;
 const notificationAdapter = {
   list: async (page) => ({
@@ -68,6 +75,7 @@ const state = {
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[character]);
 const isDisabledRoute = (pathname) => DISABLED_ROUTES.has(pathname);
 const rawPath = () => location.hash.replace(/^#/, '') || '/overview';
 const path = () => {
@@ -331,7 +339,7 @@ function renderRoute() {
   closeMobile();
   closeAccessTokenPanel();
   closeAccountMenu();
-  target.scrollIntoView({ block: 'start' });
+  $('#content-scroll-region')?.scrollTo({ top: 0, behavior: 'auto' });
   configureSdkDemos();
   bindRoute();
 }
@@ -427,6 +435,7 @@ function configureSdkDemos() {
 }
 
 function bindRoute() {
+  initializeRouteDemos();
   document.querySelectorAll('.dismiss-alert').forEach((element) => { element.onclick = () => element.closest('.alert')?.remove(); });
   document.querySelectorAll('.remove-chip').forEach((element) => { element.onclick = () => element.closest('.chip')?.remove(); });
   document.querySelectorAll('[data-open-overlay]').forEach((element) => { element.onclick = () => openOverlay(element.dataset.openOverlay, element); });
@@ -453,24 +462,308 @@ function bindRoute() {
       preview.innerHTML = applyUtilities(`<span class="feedback-symbol">${values[0]}</span><strong>${values[1]}</strong><p>${values[2]}</p>${control.dataset.feedback === 'error' ? btnHtml('Try again', 'secondary', 'data-feedback="loading"') : ''}`);
     };
   });
-  document.querySelectorAll('[data-demo-submit]').forEach((element) => { element.onclick = (event) => { event.preventDefault(); showToast('success', 'Details saved'); }; });
+  document.querySelectorAll('[data-demo-submit]').forEach((element) => { element.onclick = (event) => { event.preventDefault(); const form = element.closest('form'); const output = $('[data-form-output]', form ?? document); if (!form?.reportValidity()) { if (output) output.textContent = 'Validation blocked submission.'; return; } if (output) output.textContent = JSON.stringify(Object.fromEntries(new FormData(form)), null, 2); showToast('success', 'Details saved'); }; });
+  document.querySelectorAll('[data-demo-reset]').forEach((element) => { element.onclick = (event) => { event.preventDefault(); const form = element.closest('form'); form?.reset(); const output = $('[data-form-output]', form ?? document); if (output) output.textContent = ''; }; });
   document.querySelectorAll('.copy-code').forEach((element) => { element.onclick = async () => { try { await navigator.clipboard.writeText(element.dataset.copy); showToast('success', 'Code copied'); } catch { showToast('danger', 'Copy failed'); } }; });
-  document.querySelectorAll('[data-sort]').forEach((control) => { control.onclick = () => { const body = control.closest('table')?.querySelector('tbody'); const index = control.closest('th')?.cellIndex ?? 0; if (!body) return; const rows = [...body.rows].sort((a, b) => a.cells[index]?.textContent.localeCompare(b.cells[index]?.textContent)); body.replaceChildren(...rows); control.textContent = control.textContent.replace('↕', '↑'); }; });
-  document.querySelectorAll('.table-tools .sdk-button').forEach((control) => { control.onclick = () => showToast('success', `CSV ready · ${sdk?.toCsvString?.([['tracking', 'status'], ['AFR-102948', 'in_transit']]).length ?? 0} bytes`); });
-  document.querySelectorAll('.pagination button:not([disabled])').forEach((control) => { control.onclick = () => { const label = control.parentElement?.querySelector('span'); if (label) label.textContent = 'Page 2 of 3'; }; });
-  $('[data-clear-filters]')?.addEventListener('click', () => { document.querySelectorAll('.filter-bar input').forEach((input) => { input.value = ''; }); showToast('info', 'Host filters cleared'); });
   const iconSearch = $('[data-icon-search]');
   if (iconSearch) iconSearch.oninput = () => document.querySelectorAll('[data-icon-name]').forEach((element) => { element.hidden = !element.dataset.iconName.includes(iconSearch.value.toLowerCase()); });
+  document.querySelectorAll('.tooltip-trigger').forEach((trigger) => {
+    const tooltip = document.getElementById(trigger.getAttribute('aria-describedby') ?? '');
+    if (!tooltip) return;
+    const open = () => { tooltip.hidden = false; };
+    const close = () => { tooltip.hidden = true; };
+    trigger.addEventListener('mouseenter', open);
+    trigger.addEventListener('mouseleave', close);
+    trigger.addEventListener('focus', open);
+    trigger.addEventListener('blur', close);
+  });
+  document.querySelectorAll('[data-table-sort]').forEach((control) => {
+    control.addEventListener('click', () => {
+      const type = control.closest('[data-playground-filter-table="usecase"]') ? 'usecase' : 'component';
+      const tableState = type === 'usecase' ? playgroundState.usecaseTable : playgroundState.componentTable;
+      const key = control.dataset.tableSort;
+      if (!key) return;
+      tableState.sortDirection = tableState.sortKey === key && tableState.sortDirection === 'asc' ? 'desc' : 'asc';
+      tableState.sortKey = key;
+      renderPlaygroundTable(type);
+    });
+  });
+  document.querySelectorAll('[data-table-demo]').forEach((control) => {
+    control.addEventListener('click', () => {
+      playgroundState.componentTable.demo = control.dataset.tableDemo;
+      renderPlaygroundTable('component');
+    });
+  });
+  document.querySelectorAll('[data-table-apply]').forEach((control) => {
+    control.addEventListener('click', () => {
+      const type = control.closest('[data-playground-filter-table="usecase"]') ? 'usecase' : 'component';
+      const tableState = type === 'usecase' ? playgroundState.usecaseTable : playgroundState.componentTable;
+      const next = { ...tableState.filterState, search: $('[data-table-search]', control.closest('[data-playground-filter-table]'))?.value?.trim() || undefined };
+      commitTableFilters(type, next);
+    });
+  });
+  document.querySelectorAll('[data-table-clear]').forEach((control) => {
+    control.addEventListener('click', () => {
+      const type = control.closest('[data-playground-filter-table="usecase"]') ? 'usecase' : 'component';
+      commitTableFilters(type, emptyFilters());
+      showToast('info', 'Filters cleared');
+    });
+  });
+  document.querySelectorAll('[data-table-filter]').forEach((control) => { control.addEventListener('click', () => { void openFilterDrawerFor(control.closest('[data-playground-filter-table="usecase"]') ? 'usecase' : 'component', control); }); });
+  document.querySelectorAll('[data-page-direction]').forEach((control) => {
+    control.addEventListener('click', () => {
+      const type = control.closest('[data-playground-filter-table="usecase"]') ? 'usecase' : 'component';
+      const tableState = type === 'usecase' ? playgroundState.usecaseTable : playgroundState.componentTable;
+      tableState.page += control.dataset.pageDirection === 'next' ? 1 : -1;
+      tableState.filterState = { ...tableState.filterState, page: tableState.page, size: tableState.size };
+      filterQueryService?.setPage?.(tableState.page, TRACK_SHIPMENTS_CONFIG);
+      renderPlaygroundTable(type);
+    });
+  });
+  document.querySelectorAll('[data-table-refresh]').forEach((control) => { control.addEventListener('click', () => { playgroundState.componentTable.demo = 'loading'; renderPlaygroundTable('component'); setTimeout(() => { playgroundState.componentTable.demo = 'ready'; renderPlaygroundTable('component'); }, 500); }); });
+  document.querySelectorAll('[data-table-export]').forEach((control) => { control.addEventListener('click', () => showToast('success', `Export ready · ${sdk?.toCsvString?.({ headers: ['reference'], rows: [['SFN-1000']] })?.length ?? 0} bytes`)); });
+  document.querySelectorAll('[data-filter-chip-remove]').forEach((control) => {
+    control.addEventListener('click', () => {
+      const type = control.closest('[data-playground-filter-table="usecase"]') ? 'usecase' : 'component';
+      const tableState = type === 'usecase' ? playgroundState.usecaseTable : playgroundState.componentTable;
+      const key = control.dataset.filterChipRemove;
+      const next = { ...tableState.filterState, values: { ...tableState.filterState.values } };
+      if (key === 'search') next.search = undefined;
+      else if (key === 'date') { next.from = undefined; next.to = undefined; next.date = undefined; }
+      else delete next.values[key];
+      commitTableFilters(type, next);
+    });
+  });
+  document.querySelectorAll('[data-row-menu-button]').forEach((button) => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('[data-row-menu]').forEach((menuPanel) => { if (menuPanel !== button.nextElementSibling) menuPanel.classList.add('hidden'); });
+      const panel = button.nextElementSibling;
+      const open = panel.classList.toggle('hidden') === false;
+      button.setAttribute('aria-expanded', String(open));
+      if (open) panel.querySelector('[role="menuitem"]')?.focus();
+    });
+  });
+  document.querySelectorAll('[data-row-action="copy"]').forEach((button) => { button.addEventListener('click', async () => { await navigator.clipboard.writeText(button.dataset.reference ?? ''); showToast('success', 'Reference copied'); button.closest('[data-row-menu]')?.classList.add('hidden'); }); });
+  document.querySelectorAll('[data-row-action="delete"]').forEach((button) => { button.addEventListener('click', () => { showToast('warning', `Delete ${button.dataset.reference}`); button.closest('[data-row-menu]')?.classList.add('hidden'); }); });
+  document.querySelectorAll('[data-step-index]').forEach((button) => button.addEventListener('click', () => { playgroundState.stepperIndex = Number(button.dataset.stepIndex ?? 0); renderStepper(); }));
+  $('[data-stepper-back]')?.addEventListener('click', () => { playgroundState.stepperIndex = Math.max(0, playgroundState.stepperIndex - 1); renderStepper(); });
+  $('[data-stepper-next]')?.addEventListener('click', () => { playgroundState.stepperIndex = Math.min(3, playgroundState.stepperIndex + 1); renderStepper(); });
+  document.querySelectorAll('[data-onboarding-submit]').forEach((button) => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      const form = button.closest('form');
+      const output = $('[data-onboarding-output]', form?.parentElement ?? document);
+      const values = Object.fromEntries([...form.querySelectorAll('africanies-text-input')].map((field) => [field.getAttribute('name'), readFieldValue(field).trim()]));
+      if (!values.email || !sdk?.isValidEmail?.(values.email)) { if (output) output.textContent = 'Enter a valid email address.'; return; }
+      if (form.dataset.onboardingForm === 'reset' && values.password !== values.confirmation) { if (output) output.textContent = 'Passwords do not match.'; return; }
+      if ((form.dataset.onboardingForm === 'login' || form.dataset.onboardingForm === 'reset') && !values.password) { if (output) output.textContent = 'Password is required.'; return; }
+      if (output) output.textContent = form.dataset.onboardingForm === 'forgot' ? 'Reset link sent.' : form.dataset.onboardingForm === 'reset' ? 'Password updated.' : 'Signed in (demo).';
+      showToast('success', 'Form submitted');
+    });
+  });
+  document.querySelectorAll('[data-onboarding-clear]').forEach((button) => button.addEventListener('click', (event) => {
+    event.preventDefault();
+    const form = button.closest('form');
+    form.querySelectorAll('africanies-text-input').forEach((field) => { field.value = ''; field.setAttribute('value', ''); });
+    const output = $('[data-onboarding-output]', form?.parentElement ?? document);
+    if (output) output.textContent = '';
+  }));
   document.querySelectorAll('[data-sdk-overlay]').forEach((control) => { control.onclick = async () => { const kind = control.dataset.sdkOverlay; if (kind === 'confirm') { const result = await confirmService?.confirm({ title: 'Cancel shipment?', message: 'This action cannot be undone.', danger: true }); showToast('info', `SDK confirm result: ${String(result)}`); return; } const service = kind === 'drawer' ? drawerService : modalService; service?.open(({ document: owner, ref }) => { const frame = owner.createElement('africanies-overlay-frame'); frame.innerHTML = '<strong slot="header">SDK overlay</strong><p>Opened by the SDK overlay service.</p><button slot="footer" type="button">Close</button>'; frame.querySelector('button')?.addEventListener('click', () => ref.close('closed')); return frame; }, { dismissible: true }); }; });
   document.querySelectorAll('[data-sdk-toast]').forEach((control) => { control.onclick = () => { const kind = control.dataset.sdkToast; if (kind === 'stack') { toastService?.success('Duplicate notification', 'SDK toast'); toastService?.success('Duplicate notification', 'SDK toast'); } else if (kind === 'error') toastService?.error('Persistent SDK error', 'Action failed'); else toastService?.success('Shipment saved', 'SDK toast'); }; });
   $('[data-sdk-with-toast]')?.addEventListener('click', () => { const output = $('#sdk-with-toast-output'); if (output) output.textContent = JSON.stringify(sdk.withToast({ successMessage: 'Shipment saved', errorMessage: 'Shipment failed' })); });
-  $('[data-sdk-filter-drawer]')?.addEventListener('click', () => { const ref = filterDrawerService?.open(sdk.trackShipmentsFilterConfig); void ref?.closed.then((result) => { const output = $('#sdk-filter-output'); if (output) output.textContent = JSON.stringify(result ?? {}); }); });
+  $('[data-sdk-filter-drawer]')?.addEventListener('click', () => { const ref = filterDrawerService?.open(TRACK_SHIPMENTS_CONFIG); void ref?.closed.then((result) => { const output = $('#sdk-filter-output'); if (output) output.textContent = JSON.stringify(result ?? {}); }); });
   $('[data-sdk-notifications]')?.addEventListener('click', () => { notificationDrawerService?.open(); });
-  $('[data-sdk-confirm-retry]')?.addEventListener('click', () => { let attempts = 0; const output = $('#sdk-confirm-output'); const onError = () => { if (output) output.textContent = 'Async error surfaced · retry available'; }; document.addEventListener('confirm-error', onError, { once: true }); void confirmService?.confirm({ title: 'Retryable confirmation', message: 'The first attempt fails; retry succeeds.', confirmLabel: 'Run async work', onConfirm: async () => { attempts += 1; await Promise.resolve(); if (attempts === 1) throw new Error('Simulated transient failure'); } }).then((result) => { if (output) output.textContent = `Confirmed after retry: ${result}`; }); });
-  $('[data-sdk-form-submit]')?.addEventListener('click', (event) => { event.preventDefault(); const form = event.currentTarget.closest('form'); const output = $('#sdk-form-output'); if (output) output.textContent = JSON.stringify(Object.fromEntries(new FormData(form)), null, 2); });
-  $('[data-sdk-filter-apply]')?.addEventListener('click', () => { const params = sdk?.toFilterParams?.({ search: 'Lagos', order: 'desc', values: { shipment_status: 'in-process' } }, sdk.trackShipmentsFilterConfig); const output = $('#sdk-filter-output'); if (output) output.textContent = JSON.stringify(params); });
+  const runRetryConfirmDemo = (outputSelector) => {
+    let attempts = 0;
+    const output = $(outputSelector);
+    const onError = () => { if (output) output.textContent = 'Async error surfaced · retry available'; };
+    document.addEventListener('confirm-error', onError, { once: true });
+    void confirmService?.confirm({ title: 'Retryable confirmation', message: 'The first attempt fails; retry succeeds.', confirmLabel: 'Run async work', onConfirm: async () => { attempts += 1; await Promise.resolve(); if (attempts === 1) throw new Error('Simulated transient failure'); } }).then((result) => { if (output) output.textContent = `Confirmed after retry: ${result}`; });
+  };
+  $('[data-sdk-confirm-retry]')?.addEventListener('click', () => { runRetryConfirmDemo('#sdk-confirm-output'); });
+  $('[data-confirm-retry-demo]')?.addEventListener('click', () => { runRetryConfirmDemo('[data-confirm-output]'); });
+  $('[data-sdk-form-submit]')?.addEventListener('click', (event) => { event.preventDefault(); const form = event.currentTarget.closest('form'); const output = $('#sdk-form-output'); if (output) output.textContent = JSON.stringify(Object.fromEntries([...form.querySelectorAll('[name]')].map((field) => [field.getAttribute('name'), readFieldValue(field)])), null, 2); });
+  $('[data-sdk-filter-apply]')?.addEventListener('click', () => {
+    const params = sdk?.toFilterParams?.({ search: 'Lagos', order: 'desc', values: { shipment_status: 'in-process' } }, TRACK_SHIPMENTS_CONFIG)
+      ?? { search: 'Lagos', order: 'desc', shipment_status: 'in-process' };
+    const output = $('#sdk-filter-output');
+    if (output) output.textContent = JSON.stringify(params);
+  });
   $('[data-sdk-filter-clear]')?.addEventListener('click', () => { const output = $('#sdk-filter-output'); if (output) output.textContent = JSON.stringify(sdk?.emptyFilterState?.() ?? {}); });
   $('[data-sdk-icons]')?.addEventListener('click', async () => { const output = $('#sdk-icon-output'); try { const spriteUrl = sdkModulePath.startsWith('../sdk/') ? '../sdk/icons.sprite.svg' : '/packages/icons/assets/icons.sprite.svg'; const registry = new sdk.IconRegistryService({ document, fetch, spriteUrl }); await registry.ensureLoaded(); if (output) output.textContent = `SDK sprite loaded · ${sdk.ICON_NAMES.length} names`; } catch (error) { if (output) output.textContent = `SDK sprite error · ${sdk.formatApiErrorMessage(error)}`; } });
+}
+
+const TRACK_SHIPMENTS_CONFIG = sdk?.trackShipmentsFilterConfig ?? {
+  id: 'track-shipments',
+  search: { param: 'search', label: 'Shipment ID', placeholder: 'Search' },
+  date: { rangeParams: { from: 'from', to: 'to' }, fieldParam: 'date', fields: [{ value: 'created_at', label: 'Date Created' }] },
+  sort: { param: 'order', options: [{ value: 'asc', label: 'Ascending' }, { value: 'desc', label: 'Descending' }] },
+  pagination: { pageParam: 'page', sizeParam: 'size' },
+  fields: [
+    { key: 'payment_status', label: 'Payment Status', type: 'enum', options: [{ value: 'paid', label: 'Paid' }, { value: 'unpaid', label: 'Unpaid' }] },
+    { key: 'shipment_status', label: 'Shipment Status', type: 'enum', options: [{ value: 'pending', label: 'Pending' }, { value: 'in-process', label: 'In Process' }, { value: 'completed', label: 'Completed' }] },
+    { key: 'tracking_number', label: 'Tracking Number', type: 'text', placeholder: 'Search' }
+  ]
+};
+const DEFAULT_PAGE_SIZE = 15;
+const demoRows = Array.from({ length: 28 }, (_, index) => {
+  const statuses = [
+    ['In transit', 'in-process', 'paid'],
+    ['Delivered', 'completed', 'paid'],
+    ['Pending', 'pending', 'unpaid'],
+    ['Exception', 'pending', 'unpaid']
+  ];
+  const cities = ['Lagos', 'Accra', 'Nairobi', 'Cairo', 'London'];
+  const [status, shipmentStatus, paymentStatus] = statuses[index % statuses.length];
+  const origin = cities[index % 4];
+  const destination = cities[(index + 1) % cities.length];
+  return {
+    reference: `${index % 2 === 0 ? 'SFN' : 'STN'}-${1000 + index}`,
+    route: `${origin} → ${destination}`,
+    trackingNumber: `TN-${8000 + index}`,
+    status,
+    shipmentStatus,
+    paymentStatus,
+    updated: `${index + 1} hour${index === 0 ? '' : 's'} ago`
+  };
+});
+const usecaseRows = [
+  { reference: 'STN-1042', route: 'Lagos → London', trackingNumber: 'TN-8000', status: 'In transit', shipmentStatus: 'in-process', paymentStatus: 'paid', updated: '2 hours ago' },
+  { reference: 'SFN-8811', route: 'Accra → Manchester', trackingNumber: 'TN-8001', status: 'Pending', shipmentStatus: 'pending', paymentStatus: 'unpaid', updated: 'Yesterday' },
+  { reference: 'STN-2207', route: 'Nairobi → Dubai', trackingNumber: 'TN-8002', status: 'Delivered', shipmentStatus: 'completed', paymentStatus: 'paid', updated: '3 days ago' },
+  { reference: 'SFN-4410', route: 'Cairo → Berlin', trackingNumber: 'TN-8003', status: 'Exception', shipmentStatus: 'pending', paymentStatus: 'unpaid', updated: '5 hours ago' },
+  ...demoRows.slice(4, 24)
+];
+const emptyFilters = () => sdk?.emptyFilterState?.() ?? { values: {}, order: 'desc' };
+const playgroundState = {
+  componentTable: { page: 1, size: DEFAULT_PAGE_SIZE, sortKey: 'reference', sortDirection: 'asc', demo: 'ready', draftSearch: '', filterState: emptyFilters() },
+  usecaseTable: { page: 1, size: DEFAULT_PAGE_SIZE, sortKey: 'reference', sortDirection: 'asc', demo: 'ready', draftSearch: '', filterState: emptyFilters() },
+  stepperIndex: 1
+};
+
+function hydrateTableState(type) {
+  const tableState = type === 'usecase' ? playgroundState.usecaseTable : playgroundState.componentTable;
+  const next = filterQueryService?.read?.(TRACK_SHIPMENTS_CONFIG);
+  if (next && typeof next === 'object' && 'values' in next) {
+    tableState.filterState = next;
+    tableState.page = next.page ?? 1;
+    tableState.size = next.size ?? DEFAULT_PAGE_SIZE;
+    tableState.draftSearch = next.search ?? '';
+  }
+  return tableState;
+}
+
+function activeFilterCount(filterState) {
+  const params = sdk?.toFilterParams?.(filterState, TRACK_SHIPMENTS_CONFIG) ?? {};
+  return Object.keys(params).filter((key) => !['page', 'size', 'per_page', 'order'].includes(key)).length;
+}
+
+function filterRows(rows, tableState) {
+  const filterState = tableState.filterState ?? emptyFilters();
+  const search = (filterState.search ?? '').trim().toLowerCase();
+  const shipmentStatus = filterState.values?.shipment_status ?? '';
+  const paymentStatus = filterState.values?.payment_status ?? '';
+  const tracking = (filterState.values?.tracking_number ?? '').trim().toLowerCase();
+  return rows
+    .filter((row) => (!search || row.reference.toLowerCase().includes(search) || row.trackingNumber.toLowerCase().includes(search))
+      && (!shipmentStatus || row.shipmentStatus === shipmentStatus)
+      && (!paymentStatus || row.paymentStatus === paymentStatus)
+      && (!tracking || row.trackingNumber.toLowerCase().includes(tracking)))
+    .sort((a, b) => String(a[tableState.sortKey] ?? '').localeCompare(String(b[tableState.sortKey] ?? '')) * (tableState.sortDirection === 'desc' ? -1 : 1));
+}
+
+function filterChipsMarkup(filterState) {
+  const chips = [];
+  if (filterState.search) chips.push(['search', `Search: ${filterState.search}`]);
+  if (filterState.values?.payment_status) chips.push(['payment_status', `Payment: ${filterState.values.payment_status}`]);
+  if (filterState.values?.shipment_status) chips.push(['shipment_status', `Shipment: ${filterState.values.shipment_status}`]);
+  if (filterState.values?.tracking_number) chips.push(['tracking_number', `Tracking: ${filterState.values.tracking_number}`]);
+  if (filterState.from || filterState.to) chips.push(['date', `${filterState.date === 'created_at' ? 'Date created' : 'Date'}: ${filterState.from ?? '…'} → ${filterState.to ?? '…'}`]);
+  return chips.length ? `<div class="mt-3 flex flex-wrap gap-2">${chips.map(([key, label]) => `<span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-200">${esc(label)}<button type="button" class="inline-flex size-5 items-center justify-center rounded-full" data-filter-chip-remove="${key}" aria-label="Remove ${esc(label)}">${renderIcon('close', 12)}</button></span>`).join('')}</div>` : '';
+}
+
+function rowMenuMarkup(row, type) {
+  const detail = `<a href="#/usecases/shipment/${encodeURIComponent(row.reference)}" role="menuitem" class="block rounded-md px-3 py-2 text-sm text-ink hover:bg-slate-100 dark:text-white dark:hover:bg-white/10">View details</a>`;
+  const extras = type === 'usecase' ? '' : `<button type="button" role="menuitem" class="block w-full rounded-md px-3 py-2 text-left text-sm text-ink hover:bg-slate-100 dark:text-white dark:hover:bg-white/10" data-row-action="copy" data-reference="${row.reference}">Copy reference</button><button type="button" role="menuitem" class="block w-full rounded-md px-3 py-2 text-left text-sm text-danger hover:bg-red-50 dark:hover:bg-red-950/30" data-row-action="delete" data-reference="${row.reference}">Delete</button>`;
+  return `<div class="relative"><button type="button" class="inline-flex size-9 items-center justify-center rounded-lg border border-border bg-white text-ink dark:border-white/15 dark:bg-ink dark:text-white" data-row-menu-button="${row.reference}" aria-haspopup="menu" aria-expanded="false" aria-label="Actions for ${row.reference}">${renderIcon('ellipsis-v', 16)}</button><div class="absolute right-0 top-11 z-20 hidden min-w-[11rem] rounded-xl border border-border bg-white p-1 shadow-xl dark:border-white/15 dark:bg-ink" role="menu" data-row-menu="${row.reference}">${detail}${extras}</div></div>`;
+}
+
+function renderPlaygroundTable(type) {
+  const container = $(`[data-playground-filter-table="${type}"]`);
+  if (!container) return;
+  const tableState = hydrateTableState(type);
+  const rows = filterRows(type === 'usecase' ? usecaseRows : demoRows, tableState);
+  const totalPages = Math.max(1, Math.ceil(rows.length / tableState.size));
+  tableState.page = Math.min(tableState.page, totalPages);
+  const pageRows = rows.slice((tableState.page - 1) * tableState.size, tableState.page * tableState.size);
+  const filterCount = activeFilterCount(tableState.filterState);
+  const stateButtons = type === 'component' ? `<div class="mb-4 flex flex-wrap gap-2">${['ready', 'loading', 'empty', 'error'].map((kind) => `<button type="button" class="rounded-lg border px-3 py-2 text-sm font-semibold ${tableState.demo === kind ? 'border-export bg-export text-white' : 'border-border bg-white text-ink dark:border-white/15 dark:bg-ink dark:text-white'}" data-table-demo="${kind}">${kind}</button>`).join('')}</div>` : '';
+  const currentRows = tableState.demo === 'empty' ? [] : pageRows;
+  const tableMarkup = tableState.demo === 'loading'
+    ? `<div class="flex min-h-[14rem] items-center justify-center rounded-xl border border-dashed border-border bg-background-welcome dark:border-white/10 dark:bg-ink-950"><div class="flex flex-col items-center gap-2 text-sm text-neutral-500"><span class="inline-block h-8 w-8 animate-spin rounded-full border-2 border-export border-r-transparent"></span><strong>Loading shipments…</strong></div></div>`
+    : tableState.demo === 'error'
+      ? `<div class="rounded-xl border border-danger/25 bg-danger-subtle p-5 text-sm text-danger">Could not load shipments. Try refresh or adjust your filters.</div>`
+      : currentRows.length === 0
+        ? `<div class="rounded-xl border border-dashed border-border bg-background-welcome p-6 text-center dark:border-white/10 dark:bg-ink-950"><strong class="block">No shipments match these filters.</strong><span class="mt-1 block text-sm text-neutral-500">Clear a chip or reset the drawer to restore rows.</span></div>`
+        : `<div class="table-wrap overflow-auto rounded-xl border border-border dark:border-white/10"><table class="min-w-[760px] w-full border-collapse"><thead><tr>${[
+            ['reference', 'Reference'],
+            ['status', 'Status'],
+            [type === 'usecase' ? 'route' : 'trackingNumber', type === 'usecase' ? 'Route' : 'Tracking'],
+            ['updated', 'Updated'],
+            ['actions', '']
+          ].map(([key, label]) => `<th class="sticky top-0 z-10 border-b border-border bg-white px-3.5 py-3 text-left text-[11px] font-bold uppercase tracking-wide text-neutral-500 dark:border-white/10 dark:bg-ink">${key !== 'actions' ? `<button type="button" class="border-0 bg-transparent p-0 text-left text-inherit" data-table-sort="${key}">${label}${tableState.sortKey === key ? tableState.sortDirection === 'asc' ? ' ↑' : ' ↓' : ''}</button>` : label}</th>`).join('')}</tr></thead><tbody>${currentRows.map((row) => `<tr><td class="border-b border-border px-3.5 py-3 font-medium dark:border-white/10">${type === 'usecase' ? `<a href="#/usecases/shipment/${encodeURIComponent(row.reference)}" class="text-ink no-underline hover:underline dark:text-white">${row.reference}</a>` : row.reference}</td><td class="border-b border-border px-3.5 py-3 dark:border-white/10"><span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-200">${row.status}</span></td><td class="border-b border-border px-3.5 py-3 dark:border-white/10">${type === 'usecase' ? row.route : row.trackingNumber}</td><td class="border-b border-border px-3.5 py-3 dark:border-white/10">${row.updated}</td><td class="border-b border-border px-3.5 py-3 dark:border-white/10">${rowMenuMarkup(row, type)}</td></tr>`).join('')}</tbody></table></div>`;
+  container.innerHTML = `${stateButtons}<div class="filter-bar flex flex-col items-stretch gap-2.5 sm:flex-row sm:flex-wrap sm:items-center"><label class="search flex min-w-[14rem] flex-1 items-center gap-2 rounded-lg border border-slate-300 bg-white pl-2.5 dark:border-slate-600 dark:bg-slate-900">${renderIcon('search', 16)}<input class="w-full border-0 bg-transparent px-2.5 py-2 outline-none" placeholder="Search shipments" value="${esc(tableState.draftSearch)}" data-table-search></label><button type="button" class="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-white px-4 py-2 font-semibold text-ink dark:border-white/15 dark:bg-ink dark:text-white" data-table-filter>${renderIcon('filter', 16)}Filters${filterCount ? `<span class="inline-flex min-w-6 items-center justify-center rounded-full bg-export px-1.5 py-0.5 text-xs font-bold text-white">${filterCount}</span>` : ''}</button><button type="button" class="inline-flex items-center justify-center gap-2 rounded-lg bg-export px-4 py-2 font-semibold text-white" data-table-apply>Apply</button><button type="button" class="inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 font-semibold text-ink underline-offset-2 hover:underline dark:text-white" data-table-clear>Clear all</button>${type === 'component' ? `<button type="button" class="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-white px-4 py-2 font-semibold text-ink dark:border-white/15 dark:bg-ink dark:text-white" data-table-refresh>Refresh</button><button type="button" class="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-white px-4 py-2 font-bold text-ink dark:border-white/15 dark:bg-ink dark:text-white" data-table-export>Export CSV</button>` : ''}</div>${filterChipsMarkup(tableState.filterState)}<div class="mt-4 flex items-center justify-between gap-3 text-sm text-neutral-500"><span>${rows.length} shipment${rows.length === 1 ? '' : 's'}</span><span>Page ${tableState.page} of ${totalPages}</span></div><div class="mt-4">${tableMarkup}</div><nav class="pagination mt-4 flex items-center justify-end gap-3.5" aria-label="Pagination"><button type="button" class="rounded-lg border border-border bg-white px-3 py-2 font-semibold text-ink disabled:opacity-50 dark:border-white/15 dark:bg-ink dark:text-white" data-page-direction="prev" ${tableState.page <= 1 || !rows.length ? 'disabled' : ''}>Previous</button><button type="button" class="rounded-lg border border-border bg-white px-3 py-2 font-semibold text-ink disabled:opacity-50 dark:border-white/15 dark:bg-ink dark:text-white" data-page-direction="next" ${tableState.page >= totalPages || !rows.length ? 'disabled' : ''}>Next</button></nav>`;
+}
+
+function commitTableFilters(type, nextFilterState) {
+  const tableState = type === 'usecase' ? playgroundState.usecaseTable : playgroundState.componentTable;
+  tableState.filterState = { ...nextFilterState, page: 1, size: tableState.size };
+  tableState.page = 1;
+  tableState.draftSearch = tableState.filterState.search ?? '';
+  filterQueryService?.write?.(tableState.filterState, TRACK_SHIPMENTS_CONFIG);
+  renderPlaygroundTable(type);
+}
+
+async function openFilterDrawerFor(type, trigger = document.activeElement) {
+  const tableState = type === 'usecase' ? playgroundState.usecaseTable : playgroundState.componentTable;
+  const ref = filterDrawerService?.open?.({ config: TRACK_SHIPMENTS_CONFIG, state: { ...tableState.filterState, page: tableState.page, size: tableState.size }, title: 'Filter shipments' });
+  const result = await ref?.closed;
+  if (result?.applied) commitTableFilters(type, result.state);
+  trigger?.focus?.();
+}
+
+function renderStepper() {
+  const panel = $('[data-stepper-panel]');
+  const back = $('[data-stepper-back]');
+  const next = $('[data-stepper-next]');
+  const steps = $$('[data-step-index]');
+  if (!panel || !steps.length) return;
+  const bodies = [
+    '<strong class="block text-lg">Addresses</strong><p class="mt-2 text-sm text-neutral-500">Pickup and delivery route for this shipment.</p>',
+    '<strong class="block text-lg">Package</strong><p class="mt-2 text-sm text-neutral-500">Set weight, dimensions and commodity details.</p>',
+    '<strong class="block text-lg">Service</strong><p class="mt-2 text-sm text-neutral-500">Choose economy, standard or express service.</p>',
+    '<strong class="block text-lg">Review</strong><p class="mt-2 text-sm text-neutral-500">Confirm the completed shipment before submit.</p>'
+  ];
+  panel.className = 'rounded-xl border border-border bg-white p-5 dark:border-white/10 dark:bg-ink';
+  panel.innerHTML = bodies[playgroundState.stepperIndex] ?? bodies[0];
+  steps.forEach((button, index) => {
+    const parent = button.closest('li');
+    parent?.classList.remove('complete', 'active');
+    if (index < playgroundState.stepperIndex) parent?.classList.add('complete');
+    else if (index === playgroundState.stepperIndex) parent?.classList.add('active');
+  });
+  if (back) back.disabled = playgroundState.stepperIndex === 0;
+  if (next) next.disabled = playgroundState.stepperIndex === steps.length - 1;
+}
+
+function readFieldValue(element) {
+  return element?.value ?? element?.getAttribute?.('value') ?? '';
+}
+
+function initializeRouteDemos() {
+  if ($('[data-playground-filter-table="component"]')) renderPlaygroundTable('component');
+  if ($('[data-playground-filter-table="usecase"]')) renderPlaygroundTable('usecase');
+  if ($('[data-stepper-demo]')) renderStepper();
 }
 
 function bindShell() {
@@ -572,12 +865,24 @@ function bindShell() {
     if (navLink) requestAnimationFrame(renderRoute);
     if (!pathList.includes($('#access-token')) && !pathList.includes($('#access-token-panel')) && state.accessTokenOpen) closeAccessTokenPanel();
     if (!pathList.includes($('#account-menu')) && !pathList.includes($('#account-menu-panel')) && state.accountMenuOpen) closeAccountMenu();
+    if (!(event.target instanceof Element && event.target.closest('[data-row-menu-button],[data-row-menu]'))) {
+      document.querySelectorAll('[data-row-menu]').forEach((panel) => panel.classList.add('hidden'));
+      document.querySelectorAll('[data-row-menu-button]').forEach((button) => button.setAttribute('aria-expanded', 'false'));
+    }
     if (event.target.matches?.('[data-overlay-close],[data-overlay-backdrop]')) closeOverlay();
     if (event.target.matches?.('[data-overlay-action]')) { closeOverlay(); showToast('success', 'Action completed'); }
   });
   document.addEventListener('keydown', (event) => {
     const navLink = event.target instanceof Element ? event.target.closest('a[href^="#/"]') : null;
     if (navLink && (event.key === 'Enter' || event.key === ' ')) requestAnimationFrame(renderRoute);
+    const rowMenu = event.target instanceof Element ? event.target.closest('[data-row-menu]') : null;
+    if (rowMenu && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
+      const items = [...rowMenu.querySelectorAll('[role="menuitem"]')];
+      const current = items.indexOf(document.activeElement);
+      const next = (current + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+      event.preventDefault();
+      items[next]?.focus();
+    }
     if (event.key === 'Escape') {
       closeOverlay();
       closeMobile();
@@ -589,6 +894,8 @@ function bindShell() {
         menu.setAttribute('aria-expanded', 'false');
         menu.focus();
       }
+      document.querySelectorAll('[data-row-menu]').forEach((panel) => panel.classList.add('hidden'));
+      document.querySelectorAll('[data-row-menu-button]').forEach((button) => button.setAttribute('aria-expanded', 'false'));
     }
     if (event.key === 'Tab') {
       const dialog = $('[role="dialog"]');
