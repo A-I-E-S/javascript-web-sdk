@@ -42,6 +42,8 @@
     "build:styles": "tailwindcss -c tailwind.config.mjs -i packages/theme/src/tailwind.css -o packages/theme/theme.css --minify",
     "dev": "node tools/dev.mjs",
     "dev:styles": "tailwindcss -c tailwind.config.mjs -i packages/theme/src/tailwind.css -o packages/theme/theme.css --watch",
+    "evidence:generate": "node tools/generate-capability-inventory.mjs",
+    "evidence:verify": "node tools/validate-capability-inventory.mjs",
     "artifact:verify": "npm run build --silent && node tools/verify-artifacts.mjs",
     "clean": "node tools/clean.mjs",
     "lint": "eslint .",

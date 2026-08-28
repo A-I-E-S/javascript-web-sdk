@@ -12,6 +12,8 @@ export interface ToastServiceOptions {
   clearTimeout?: typeof globalThis.clearTimeout;
 }
 
+export const provideAfricaniesToasts = (options: ToastServiceOptions = {}): ToastService => new ToastService(options);
+
 export class ToastService {
   #items: ToastItem[] = [];
   #listeners = new Set<ToastListener>();
@@ -24,8 +26,8 @@ export class ToastService {
   #clearTimeout: typeof globalThis.clearTimeout;
   constructor(options: ToastServiceOptions = {}) {
     this.#document = options.document;
-    this.#setTimeout = options.setTimeout ?? globalThis.setTimeout;
-    this.#clearTimeout = options.clearTimeout ?? globalThis.clearTimeout;
+    this.#setTimeout = options.setTimeout ?? globalThis.setTimeout.bind(globalThis);
+    this.#clearTimeout = options.clearTimeout ?? globalThis.clearTimeout.bind(globalThis);
   }
   get items(): readonly ToastItem[] { return this.#items; }
   get hasStacks(): boolean { return this.#items.some(item => item.count > 1); }

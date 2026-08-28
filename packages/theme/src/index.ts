@@ -71,3 +71,15 @@ export class ModeColorService {
   subscribe(listener: (classes: Readonly<ModeColorClasses>) => void): Unsubscribe { this.#listeners.add(listener); return () => { this.#listeners.delete(listener); }; }
   destroy(): void { this.#unsubscribeSource?.(); this.#unsubscribeSource = undefined; this.#listeners.clear(); }
 }
+
+export interface ShippingModeDocument {
+  readonly documentElement: { readonly dataset: DOMStringMap };
+}
+
+/** Mirrors shipping-mode state onto the DOM for mode-aware CSS and custom elements. */
+export function bindShippingModeToDocument(source: ShippingModeSource, target: ShippingModeDocument): Unsubscribe {
+  const apply = (mode: ShippingMode): void => { target.documentElement.dataset.africaniesMode = mode; };
+  apply(source.getMode());
+  const unsubscribe = source.subscribe?.(apply) ?? (() => undefined);
+  return () => { unsubscribe(); delete target.documentElement.dataset.africaniesMode; };
+}

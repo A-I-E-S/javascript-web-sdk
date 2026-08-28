@@ -64,6 +64,16 @@ test('theme uses system fallback and visual changes survive storage failure', ()
   assert.equal(root.style.colorScheme, 'light');
 });
 
+test('stored light preference synchronously clears stale dark prepaint state', () => {
+  const root = createRoot();
+  root.classList.add('dark');
+  root.style.colorScheme = 'dark';
+  const theme = new ThemeService({ document: { documentElement: root }, storage: { get: () => 'light', set: () => undefined } });
+  assert.equal(theme.getTheme(), 'light');
+  assert.equal(root.classList.contains('dark'), false);
+  assert.equal(root.style.colorScheme, 'light');
+});
+
 test('mode colors preserve exact Angular class bundles and subscriptions', () => {
   let mode = 'sfn';
   let listener;

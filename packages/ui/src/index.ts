@@ -4,6 +4,7 @@ import { AFRICANIES_FORM_ELEMENTS } from './forms.js';
 import { AFRICANIES_NAVIGATION_DATA_ELEMENTS } from './navigation-data.js';
 import { AFRICANIES_MISC_ELEMENTS } from './misc.js';
 import { AFRICANIES_EXTERNAL_ELEMENTS } from './external.js';
+import { ConfirmDialogComponent } from './overlay.js';
 import { withAfricaniesShadowStyles } from './styles.js';
 
 export * from './forms.js';
@@ -13,6 +14,7 @@ export * from './external.js';
 export * from './overlay.js';
 export * from './toast.js';
 export * from './styles.js';
+export * from './translations.js';
 
 export const UI_PACKAGE_NAME = '@africanies/africanies-ui';
 
@@ -125,6 +127,10 @@ abstract class MessageComponent extends AfricaniesElement {
 export class LoadingComponent extends MessageComponent { protected readonly messageRole = 'status'; protected readonly defaultHeading = 'Loading'; }
 export class EmptyComponent extends MessageComponent { protected readonly messageRole = 'status'; protected readonly defaultHeading = 'No results'; }
 export class ErrorComponent extends MessageComponent { protected readonly messageRole = 'alert'; protected readonly defaultHeading = 'Something went wrong'; }
+export type LoadingStateMode = 'spinner' | 'skeleton';
+export const LoadingStateComponent = LoadingComponent;
+export const EmptyStateComponent = EmptyComponent;
+export const ErrorStateComponent = ErrorComponent;
 
 export type AsyncState = 'idle' | 'loading' | 'empty' | 'error' | 'success';
 export interface AsyncQueryStateLike<T = unknown> { data: T | undefined; isLoading: boolean; isFetching: boolean; isError: boolean; error: string | null; }
@@ -154,6 +160,18 @@ export class AsyncStateComponent<T = unknown> extends AfricaniesElement {
 export class ErrorIndicatorComponent extends AfricaniesElement {
   static readonly observedAttributes = ['message'];
   protected render(): void { this.setMarkup(`<span part="indicator" role="alert"><span aria-hidden="true">!</span><span>${escapeHtml(this.getAttribute('message') ?? 'Error')}</span></span>`); }
+}
+
+export type AccordionSize = 'sm' | 'md';
+export class AccordionComponent extends AfricaniesElement {
+  static readonly observedAttributes = ['heading', 'open', 'size', 'disabled'];
+  #toggle = (): void => { if (!this.hasAttribute('disabled')) { this.toggleAttribute('open'); this.dispatchEvent(new CustomEvent('open-change', { bubbles: true, composed: true, detail: { open: this.hasAttribute('open') } })); } };
+  protected render(): void {
+    const open = this.hasAttribute('open');
+    const id = this.id ? `${this.id}-panel` : 'accordion-panel';
+    this.setMarkup(`<section part="accordion" data-size="${escapeHtml(this.getAttribute('size') ?? 'md')}"><h3><button part="trigger" type="button" aria-expanded="${open}" aria-controls="${escapeHtml(id)}"${this.hasAttribute('disabled') ? ' disabled' : ''}>${escapeHtml(this.getAttribute('heading') ?? '')}</button></h3><div part="panel" id="${escapeHtml(id)}"${open ? '' : ' hidden'}><slot></slot></div></section>`);
+    this.renderRoot?.querySelector('button')?.addEventListener('click', this.#toggle);
+  }
 }
 
 export type AlertVariant = 'info' | 'success' | 'warning' | 'danger';
@@ -266,12 +284,14 @@ export const AFRICANIES_UI_ELEMENTS = Object.freeze({
   'africanies-error': ErrorComponent,
   'africanies-async-state': AsyncStateComponent,
   'africanies-error-indicator': ErrorIndicatorComponent,
+  'africanies-accordion': AccordionComponent,
   'africanies-alert': AlertComponent,
   'africanies-chip': ChipComponent,
   'africanies-content-stack': ContentStackComponent,
   'africanies-toast-item': ToastItemComponent,
   'africanies-toast-host': ToastHostComponent,
-  'africanies-overlay-frame': OverlayFrameComponent
+  'africanies-overlay-frame': OverlayFrameComponent,
+  'africanies-confirm-dialog': ConfirmDialogComponent
 });
 export type AfricaniesUiElementName = keyof typeof AFRICANIES_UI_ELEMENTS;
 

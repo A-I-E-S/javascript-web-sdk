@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#f6f7f9">
     <title>AFRICANIES Web SDK · Playground</title>
     <script>
-      try { if (localStorage.getItem('africanies-playground-theme') === 'dark') document.documentElement.classList.add('dark'); } catch {}
+      try { if (JSON.parse(localStorage.getItem('africanies-playground-theme')) === 'dark') document.documentElement.classList.add('dark'); } catch {}
     </script>
     <link rel="stylesheet" href="/packages/theme/theme.css">
   </head>

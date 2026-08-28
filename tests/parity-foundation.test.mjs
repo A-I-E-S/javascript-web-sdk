@@ -51,3 +51,37 @@ test('theme package publishes its generated CSS and reusable Tailwind preset', a
   assert.equal(manifest.exports['./tailwind-preset'], './tailwind.preset.mjs');
   assert.ok(manifest.files.includes('tailwind.preset.mjs'));
 });
+
+test('executable capability inventory has seven columns, 40 domains and 485 declaration heads', async () => {
+  const inventory = await load('parity/capability-inventory.json');
+  const columns = ['domain', 'angularPackage', 'angularDeclarations', 'vanillaPackage', 'vanillaExports', 'status', 'evidence'];
+  assert.deepEqual(inventory.columns, columns);
+  assert.equal(inventory.rows.length, 40);
+  assert.equal(new Set(inventory.rows.map(({ domain }) => domain)).size, 40);
+  assert.equal(inventory.rows.reduce((count, row) => count + row.angularDeclarations.length, 0), 485);
+  for (const row of inventory.rows) assert.deepEqual(Object.keys(row), columns);
+});
+
+test('generated Angular-to-Vanilla export diff reconciles every canonical declaration', async () => {
+  const diff = await load('parity/generated-export-diff.json');
+  assert.equal(diff.angularDeclarationHeads, 485);
+  assert.equal(diff.vanillaCustomElements, 56);
+  assert.equal(diff.matched + diff.missing.length, 485);
+  assert.ok(diff.vanillaDeclarationHeads > 0);
+});
+
+test('every canonical declaration has explicit evidence, rationale and semantic status', async () => {
+  const record = await load('parity/symbol-mappings.json');
+  assert.deepEqual(record.allowedStatuses, ['equivalent', 'renamed', 'type-erased', 'angular-only', 'missing']);
+  assert.equal(record.mappings.length, 485);
+  for (const mapping of record.mappings) {
+    assert.ok(record.allowedStatuses.includes(mapping.status));
+    assert.ok(mapping.evidence.length > 0);
+    assert.ok(mapping.rationale.length > 0);
+    if (['equivalent', 'renamed'].includes(mapping.status)) assert.ok(mapping.vanillaSymbol);
+    if (mapping.demonstration !== null) {
+      assert.match(mapping.demonstration.route, /^\//);
+      assert.ok(mapping.demonstration.selector);
+    }
+  }
+});
