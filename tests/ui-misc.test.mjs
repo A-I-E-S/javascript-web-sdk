@@ -2,11 +2,26 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { AFRICANIES_MISC_ELEMENTS, ActionMenuComponent, FilterQueryService, carrierLogoUrl, normalizeCarrierName } from '../packages/ui/dist/index.js';
 
+function createShadowRootStub() {
+  return {
+    innerHTML: '',
+    activeElement: null,
+    querySelector: () => null,
+    querySelectorAll: () => []
+  };
+}
+
 test('remaining non-external UI registry is explicit and browser-safe', () => {
-  assert.equal(Object.keys(AFRICANIES_MISC_ELEMENTS).length, 14);
+  assert.equal(Object.keys(AFRICANIES_MISC_ELEMENTS).length, 17);
   const menu = new ActionMenuComponent();
+  menu.root = createShadowRootStub();
+  menu.getAttribute = (name) => (name === 'aria-label' ? 'More actions' : null);
   menu.items = [{ id: 'edit', label: 'Edit' }, { id: 'delete', label: 'Delete', danger: true }];
+  menu.items = [{ id: 'edit', label: 'Edit', dividerBefore: true }, { id: 'delete', label: 'Delete', danger: true }];
   assert.equal(menu.open, false);
+  assert.match(menu.root.innerHTML, /aria-label="More actions"/);
+  assert.match(menu.root.innerHTML, /role="separator"/);
+  assert.match(menu.root.innerHTML, /data-menu-index="0"/);
 });
 test('carrier helpers create stable asset-safe names and URLs', () => {
   assert.equal(normalizeCarrierName(' DHL Express '), 'dhl-express');

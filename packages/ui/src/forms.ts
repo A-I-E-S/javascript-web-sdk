@@ -1,9 +1,23 @@
+import { withAfricaniesShadowStyles } from './styles.js';
+
 type HTMLElementConstructor = typeof HTMLElement;
 const HTMLElementBase: HTMLElementConstructor = (globalThis.HTMLElement ?? class {}) as HTMLElementConstructor;
 const html = (value: unknown): string => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 let controlSequence = 0;
 
 export interface SelectOption<T = string> { label: string; value: T; disabled?: boolean; }
+export type SelectSize = 'sm' | 'md' | 'lg';
+export type TextInputType = 'text' | 'email' | 'password' | 'search' | 'tel' | 'url';
+export interface RadioOption<T = string> extends SelectOption<T> { description?: string; }
+export type OtpInputVariant = 'default' | 'boxed';
+export type FileUploadVariant = 'default' | 'compact';
+export interface SearchComboboxBadge { label: string; variant?: 'neutral' | 'success' | 'warning' | 'danger'; }
+export type SearchComboboxLabelFn<T> = (option: T) => string;
+export type SearchComboboxSubtitleFn<T> = (option: T) => string | undefined;
+export type SearchComboboxBadgeFn<T> = (option: T) => SearchComboboxBadge | undefined;
+export type SearchComboboxMarkFn<T> = (option: T) => boolean;
+export type SearchComboboxTrackFn<T> = (option: T) => string | number;
+export type SearchComboboxSearchFn<T> = (query: string) => Promise<readonly T[]>;
 export interface SelectCreateConfig<TResult = unknown, T = string> { label: string; component: Node | ((context: { data: unknown; ref: unknown; document: Document }) => Node); data?: unknown; mapResult: (result: TResult) => SelectOption<T>; }
 export interface SelectModalAdapter { open<TData, TResult>(component: Node | ((context: { data: TData | undefined; ref: unknown; document: Document }) => Node), config: { data?: TData }): { closed: Promise<TResult | undefined> }; }
 
@@ -40,7 +54,7 @@ abstract class FormControlElement extends HTMLElementBase {
     const label = this.getAttribute('label') ?? '';
     const error = this.getAttribute('error') ?? '';
     const errorId = `${this.controlId}-error`;
-    this.root.innerHTML = `${label ? `<label part="label" for="${this.controlId}">${html(label)}</label>` : ''}${this.controlMarkup()}${error ? `<div part="error" id="${errorId}" role="alert">${html(error)}</div>` : ''}`;
+    this.root.innerHTML = withAfricaniesShadowStyles(`${label ? `<label part="label" for="${this.controlId}">${html(label)}</label>` : ''}${this.controlMarkup()}${error ? `<div part="error" id="${errorId}" role="alert">${html(error)}</div>` : ''}`);
     this.control = this.root.querySelector('input,textarea,select');
     if (!this.control) return;
     this.control.id = this.controlId;
@@ -126,6 +140,15 @@ export class SearchComboboxComponent extends FormControlElement {
   set options(value: readonly SelectOption[]) { this.#options = value; if (this.root) this.render(); }
   get options(): readonly SelectOption[] { return this.#options; }
   disconnectedCallback(): void { super.disconnectedCallback(); if (this.#timer) clearTimeout(this.#timer); }
+  protected render(): void {
+    super.render();
+    this.root?.querySelectorAll<HTMLElement>('[role="option"]').forEach(option => option.addEventListener('click', () => {
+      this.value = option.dataset.value ?? '';
+      this.commit(true);
+      this.#options = [];
+      this.render();
+    }));
+  }
   protected controlMarkup(): string { const listId = `${this.controlId}-list`; return `<input part="control" type="search" role="combobox" aria-autocomplete="list" aria-controls="${listId}" aria-expanded="${this.#options.length > 0}"${this.commonAttributes()}><ul part="listbox" id="${listId}" role="listbox">${this.#options.map(option => `<li role="option" data-value="${html(option.value)}">${html(option.label)}</li>`).join('')}</ul>`; }
   protected readControl(): void { super.readControl(); if (this.#timer) clearTimeout(this.#timer); const delay = Number(this.getAttribute('debounce-ms') ?? 500); this.#timer = setTimeout(() => { const min = Number(this.getAttribute('min-query-length') ?? 2); if (this.value.length >= min) this.dispatchEvent(new CustomEvent('search-query', { bubbles: true, composed: true, detail: { query: this.value } })); }, delay); }
 }

@@ -64,6 +64,16 @@ test('theme uses system fallback and visual changes survive storage failure', ()
   assert.equal(root.style.colorScheme, 'light');
 });
 
+test('stored light preference synchronously clears stale dark prepaint state', () => {
+  const root = createRoot();
+  root.classList.add('dark');
+  root.style.colorScheme = 'dark';
+  const theme = new ThemeService({ document: { documentElement: root }, storage: { get: () => 'light', set: () => undefined } });
+  assert.equal(theme.getTheme(), 'light');
+  assert.equal(root.classList.contains('dark'), false);
+  assert.equal(root.style.colorScheme, 'light');
+});
+
 test('mode colors preserve exact Angular class bundles and subscriptions', () => {
   let mode = 'sfn';
   let listener;
@@ -81,15 +91,15 @@ test('mode colors preserve exact Angular class bundles and subscriptions', () =>
   assert.deepEqual(seen, ['text-import']);
   unsubscribe();
   service.destroy();
-  assert.equal(MODE_COLOR_SAFELIST.length, 18);
+  assert.equal(MODE_COLOR_SAFELIST.length, 20);
 });
 
 test('standalone CSS preserves the Angular export/import palette', async () => {
   const css = await readFile('packages/theme/theme.css', 'utf8');
-  for (const color of ['#1cbd5d', '#24dc6d', '#e4fff3', '#f08829', '#ffa95b', '#fffcef']) {
+  for (const color of ['#1cbd5d', '#24dc6d', '#e6f6ed', '#f08829', '#ffa95b', '#fdf3e8', '#fdecec', '#fdf3d9']) {
     assert.match(css, new RegExp(color));
   }
-  for (const className of ['text-export', 'bg-export-subtle', 'text-import', 'bg-import-subtle']) {
+  for (const className of ['text-export', 'bg-export-subtle', 'text-import', 'bg-import-subtle', 'shadow-card', 'shadow-overlay']) {
     assert.match(css, new RegExp(`\\.${className}\\b`));
   }
 });

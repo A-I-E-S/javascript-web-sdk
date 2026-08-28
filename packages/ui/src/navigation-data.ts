@@ -1,8 +1,42 @@
+import { withAfricaniesShadowStyles } from './styles.js';
+
 type HTMLElementConstructor = typeof HTMLElement;
 const HTMLElementBase: HTMLElementConstructor = (globalThis.HTMLElement ?? class {}) as HTMLElementConstructor;
 const esc = (value: unknown): string => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 export interface RouteTarget { href: string; label: string; }
+export interface AfricaniesNavItem { id?: string; label: string; href?: string; routerLink?: string | readonly unknown[]; disabled?: boolean; icon?: string; queryParams?: Record<string, unknown>; fragment?: string; children?: readonly AfricaniesSideNavItem[]; }
+export type AfricaniesSideNavItem = AfricaniesNavItem;
+export interface HeaderBackTarget { routerLink: string | readonly unknown[]; queryParams?: Record<string, unknown>; fragment?: string; }
+export type ContentBackTarget = HeaderBackTarget;
+export const normalizeNavPath = (url: string): string => { const path = url.split('?')[0]?.split('#')[0] || '/'; return path === '/' ? '/' : path.replace(/\/+$/, ''); };
+const navHref = (item: AfricaniesNavItem): string => typeof item.routerLink === 'string' ? item.routerLink : item.href ?? '';
+export const isNavItemActive = (item: AfricaniesNavItem, url: string, exact = false): boolean => { const href = normalizeNavPath(navHref(item)); const path = normalizeNavPath(url); return Boolean(href) && (exact ? path === href : path === href || path.startsWith(`${href}/`)); };
+export const navItemUrlTree = (item: AfricaniesNavItem): string | readonly unknown[] | null => item.routerLink ?? item.href ?? null;
+export const isNestedChildRoute = (url: string, items: readonly AfricaniesSideNavItem[]): boolean => items.some(item => { const href = normalizeNavPath(navHref(item)); const path = normalizeNavPath(url); return Boolean(href) && path !== href && path.startsWith(`${href.replace(/\/overview$/, '')}/`); });
+export const isCatalogRootRoute = (url: string, items: readonly AfricaniesSideNavItem[]): boolean => items.some(item => normalizeNavPath(navHref(item)) === normalizeNavPath(url));
+export function resolveCatalogRootLink(url: string, items: readonly AfricaniesSideNavItem[]): string | null { const path = normalizeNavPath(url); return items.map(navHref).filter(Boolean).sort((a, b) => b.length - a.length).find(href => path === normalizeNavPath(href) || path.startsWith(`${normalizeNavPath(href).replace(/\/overview$/, '')}/`)) ?? null; }
+export function resolveHeaderBackTarget(breadcrumbs: readonly AfricaniesNavItem[], backLink?: string | readonly unknown[] | null): HeaderBackTarget | null {
+  if (backLink != null) return { routerLink: backLink };
+  for (let index = breadcrumbs.length - 2; index >= 0; index--) {
+    const item = breadcrumbs[index];
+    if (!item || item.disabled) continue;
+    const target = navItemUrlTree(item);
+    if (target != null) return { routerLink: target, queryParams: item.queryParams, fragment: item.fragment };
+  }
+  return null;
+}
+export function resolveContentBackTarget(parentPath: string | null, currentUrl: string, catalogRootLink?: string | null, backLink?: string | readonly unknown[] | null): ContentBackTarget | null { if (backLink != null) return { routerLink: backLink }; if (!parentPath) return null; const parent = normalizeNavPath(parentPath); const catalog = catalogRootLink ? normalizeNavPath(catalogRootLink) : ''; const target = catalog && catalog.startsWith(`${parent}/`) ? catalog : parent; if (target === normalizeNavPath(currentUrl)) return null; const query = currentUrl.split('#')[0]?.split('?')[1]; return { routerLink: target, ...(query ? { queryParams: Object.fromEntries(new URLSearchParams(query)) } : {}) }; }
+export interface RouteSnapshotLike { url?: readonly ({ path?: string } | string)[]; firstChild?: RouteSnapshotLike | null; }
+export function resolveParentPathFromRootSnapshot(root: RouteSnapshotLike): string | null {
+  const levels: string[][] = [];
+  let node: RouteSnapshotLike | null | undefined = root;
+  while (node) { levels.push((node.url ?? []).map(segment => typeof segment === 'string' ? segment : segment.path ?? '').filter(Boolean)); node = node.firstChild; }
+  const current = levels.flat().filter(Boolean).join('/');
+  for (let index = levels.length - 2; index >= 0; index--) { const parent = levels.slice(0, index + 1).flat().filter(Boolean).join('/'); if (parent && parent !== current) return `/${parent}`; }
+  return null;
+}
+export function buildBreadcrumbsFromSideNav(url: string, items: readonly AfricaniesSideNavItem[]): AfricaniesNavItem[] { const path = normalizeNavPath(url); const match = items.find(item => isNavItemActive(item, path)); const home: AfricaniesNavItem = { id: 'home', label: 'Home', routerLink: navHref(items[0] ?? { label: '' }) || '/overview', icon: 'home' }; const segments = path.split('/').filter(Boolean); if (!match) return [home, { id: path, label: segments[segments.length - 1] ?? 'Overview' }]; return [home, { ...match, routerLink: navHref(match) || undefined }]; }
 export const isExternalHref = (href: string): boolean => /^(?:https?:)?\/\//.test(href);
 export function navigateTo(href: string, options: { history?: History; location?: Location; replace?: boolean; callback?: (href: string) => void } = {}): void {
   if (options.callback) { options.callback(href); return; }
@@ -20,7 +54,7 @@ abstract class ViewElement extends HTMLElementBase {
   connectedCallback(): void { if (!this.root && typeof this.attachShadow === 'function') this.root = this.attachShadow({ mode: 'open' }); this.render(); }
   attributeChangedCallback(): void { this.render(); }
   protected abstract render(): void;
-  protected markup(value: string): void { if (this.root) this.root.innerHTML = value; }
+  protected markup(value: string): void { if (this.root) this.root.innerHTML = withAfricaniesShadowStyles(value); }
   protected emit(name: string, detail: unknown): void { this.dispatchEvent(new CustomEvent(name, { bubbles: true, composed: true, detail })); }
 }
 
@@ -46,11 +80,22 @@ export class SegmentComponent extends TabsComponent {}
 export interface SideNavItem extends RouteTarget { disabled?: boolean; }
 export class SideNavComponent extends ViewElement { #items: readonly SideNavItem[] = []; set items(value: readonly SideNavItem[]) { this.#items = value; this.render(); } protected render(): void { this.markup(`<nav aria-label="Primary"><ul>${this.#items.map(item => `<li><a href="${esc(item.href)}"${item.disabled ? ' aria-disabled="true" tabindex="-1"' : ''}>${esc(item.label)}</a></li>`).join('')}</ul></nav>`); } }
 
+export interface ShippingModeSwitchController { getMode(): 'sfn' | 'stn'; setMode(mode: 'sfn' | 'stn'): boolean | Promise<boolean>; subscribe?(listener: (mode: 'sfn' | 'stn') => void): () => void; }
 export class ShippingModeSwitchComponent extends ViewElement {
-  static readonly observedAttributes = ['mode', 'disabled'];
-  #click = (event: Event): void => { const button = (event.target as Element).closest?.('button[data-mode]') as HTMLButtonElement | null; if (button && !this.hasAttribute('disabled')) { this.setAttribute('mode', button.dataset.mode ?? 'sfn'); this.emit('mode-change', { mode: button.dataset.mode }); } };
-  connectedCallback(): void { super.connectedCallback(); this.root?.addEventListener('click', this.#click); } disconnectedCallback(): void { this.root?.removeEventListener('click', this.#click); }
-  protected render(): void { const mode = this.getAttribute('mode') === 'stn' ? 'stn' : 'sfn'; this.markup(`<div role="group" aria-label="Shipping mode"><button data-mode="sfn" aria-pressed="${mode === 'sfn'}">Ship from Nigeria</button><button data-mode="stn" aria-pressed="${mode === 'stn'}">Ship to Nigeria</button></div>`); }
+  static readonly observedAttributes = ['mode', 'collapsed', 'disabled'];
+  #controller: ShippingModeSwitchController | null = null;
+  #unsubscribe: (() => void) | null = null;
+  #click = (event: Event): void => { const button = (event.target as Element).closest?.('button[data-mode]') as HTMLButtonElement | null; if (button && !this.hasAttribute('disabled')) void this.select(button.dataset.mode === 'stn' ? 'stn' : 'sfn'); };
+  set controller(value: ShippingModeSwitchController | null) { this.#unsubscribe?.(); this.#controller = value; this.#unsubscribe = value?.subscribe?.(mode => { this.setAttribute('mode', mode); }) ?? null; if (value) this.setAttribute('mode', value.getMode()); }
+  get controller(): ShippingModeSwitchController | null { return this.#controller; }
+  connectedCallback(): void { super.connectedCallback(); this.root?.addEventListener('click', this.#click); }
+  disconnectedCallback(): void { this.root?.removeEventListener('click', this.#click); this.#unsubscribe?.(); this.#unsubscribe = null; }
+  async select(mode: 'sfn' | 'stn'): Promise<boolean> { const accepted = await (this.#controller?.setMode(mode) ?? true); if (!accepted) return false; this.setAttribute('mode', mode); this.emit('mode-change', { mode }); return true; }
+  protected render(): void {
+    const mode = this.getAttribute('mode') === 'stn' ? 'stn' : 'sfn'; const collapsed = this.hasAttribute('collapsed'); const disabled = this.hasAttribute('disabled');
+    const card = (option: 'sfn' | 'stn', label: string, direction: string): string => `<button part="mode-card" data-mode="${option}" data-selected="${mode === option}" type="button" role="radio" aria-checked="${mode === option}" aria-label="${label}"${disabled ? ' disabled' : ''}><svg part="mode-glyph" data-direction="${option}" viewBox="0 0 122.88 107.54" aria-hidden="true" focusable="false"><path d="M15 77c15-20 34-30 55-38l-12-17 8-4 24 15 20-8 5 6-18 13-5 31-7 3-8-27C55 60 38 70 24 88zM20 81a46 46 0 1 0 7-58M34 21h48M25 48h73M29 76h60" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>${collapsed ? '' : `<span part="mode-label"><span>Shipping</span><span>${direction}</span></span>`}</button>`;
+    this.markup(`${collapsed ? '' : '<p part="mode-heading">Shipping mode</p>'}<div part="mode-options" data-collapsed="${collapsed}" role="radiogroup" aria-label="Shipping mode">${card('stn', 'Shipping to Nigeria', 'to Nigeria')}${card('sfn', 'Shipping from Nigeria', 'from Nigeria')}</div>`);
+  }
 }
 
 export interface TableColumn<T = unknown> { key: keyof T & string; label: string; sortable?: boolean; render?: (row: T) => string; }

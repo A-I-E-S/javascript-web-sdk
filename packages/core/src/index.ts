@@ -68,7 +68,10 @@ export function resourcePath(basePath: string, resource?: number | string | null
 export function resourceQuery(resource?: number | string | null, query: QueryParams = {}): QueryParams { return resource == null ? { perPage: 15, ...query } : query; }
 
 export class ApiError extends Error { constructor(message: string, public readonly status: number, public readonly details?: unknown, public readonly response?: Response) { super(message); this.name = 'ApiError'; } }
-export interface RequestOptions { query?: QueryParams; headers?: HeadersInit; signal?: AbortSignal; timeoutMs?: number; shippingMode?: ShippingMode; cache?: boolean | number; raw?: boolean; normalize?: boolean; retry?: boolean; }
+export interface ToastHttpOptions { success: boolean; error: boolean; successMessage?: string; errorMessage?: string; }
+export interface RequestOptions { query?: QueryParams; headers?: HeadersInit; signal?: AbortSignal; timeoutMs?: number; shippingMode?: ShippingMode; cache?: boolean | number; raw?: boolean; normalize?: boolean; retry?: boolean; toast?: ToastHttpOptions; }
+/** Framework-neutral per-request equivalent of Angular HttpContext tagging. */
+export function withToast(options: Partial<ToastHttpOptions> = {}): Pick<RequestOptions, 'toast'> { return { toast: { success: options.success ?? true, error: options.error ?? true, successMessage: options.successMessage, errorMessage: options.errorMessage } }; }
 export interface ApiRequestContext { method: string; url: string; init: RequestInit; options: RequestOptions; }
 export type ApiMiddleware = (context: ApiRequestContext, next: (context?: ApiRequestContext) => Promise<Response>) => Promise<Response>;
 export interface ApiClientOptions { baseUrl: string; fetch?: typeof globalThis.fetch; timeoutMs?: number; retryDelayMs?: number; defaultHeaders?: HeadersInit; authToken?: TokenReader; shippingMode?: ShippingModeReader; cache?: HttpResponseCache; middleware?: readonly ApiMiddleware[]; }

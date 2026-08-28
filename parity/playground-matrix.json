@@ -1,0 +1,22 @@
+{
+  "$schema": "./schemas/playground-matrix.schema.json",
+  "routes": [
+    "/overview", "/components/button", "/components/alert", "/components/chip",
+    "/components/action-menu", "/components/feedback", "/components/overlays",
+    "/components/forms", "/components/filters", "/components/tooltip",
+    "/components/toast", "/components/table", "/components/stepper",
+    "/components/navigation/overview", "/components/navigation/documents",
+    "/components/navigation/events", "/usecases/shipment", "/usecases/shipment/:id",
+    "/usecases/onboarding/login", "/usecases/onboarding/forgot-password",
+    "/usecases/onboarding/reset-password", "/lecture", "/icons", "/tokens",
+    "/models", "/api"
+  ],
+  "dimensions": ["structure", "visual", "responsive", "theme", "pointer", "keyboard", "focus", "loading", "empty", "error", "success", "animation"],
+  "components": [
+    { "id": "shell", "evidence": ["shell.desktop", "shell.tablet", "shell.mobile", "shell.dark", "shell.import"], "status": "verified" },
+    { "id": "feedback", "evidence": ["feedback.states"], "status": "verified" },
+    { "id": "overlays", "evidence": ["overlays.keyboard"], "status": "verified" },
+    { "id": "toast", "evidence": ["toast.success"], "status": "verified" }
+  ],
+  "allowedStatuses": ["verified", "gap", "unverified", "approved-divergence"]
+}

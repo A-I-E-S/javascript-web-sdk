@@ -2,7 +2,7 @@
 
 ## Registration and contracts
 
-`defineAfricaniesElements({ customElements, HTMLElement })` explicitly and idempotently registers the complete 50+ element catalog. Importing the package does not register elements or touch the DOM.
+`defineAfricaniesElements({ customElements, document, HTMLElement })` explicitly and idempotently registers the complete 50+ element catalog. Importing the package does not register elements or touch the DOM.
 
 Structured inputs use properties, scalar configuration uses attributes, and outputs use bubbling composed `CustomEvent`s. Forms use form-associated behavior when `ElementInternals` is supported. Disconnect callbacks release owned listeners/subscriptions.
 
@@ -21,7 +21,7 @@ Angular-only directives, providers, content definitions, router injection, and C
 
 ## Overlays
 
-`ModalService` and `DrawerService` return an `OverlayRef`. Behavior covers backdrop/Escape close, focus containment/return, scroll locking, and one-time result resolution. Call `close(result)` or destroy the owning service. Angular CDK portals are replaced by DOM/callback contracts; `RouteOverlayService` uses a host URL/history adapter.
+`ModalService` and `DrawerService` return an `AfricaniesOverlayRef`. Behavior covers backdrop/Escape close, focus containment/return, scroll locking, and one-time result resolution. Call `close(result)` or destroy the owning service. Angular CDK portals are replaced by DOM/callback contracts; `RouteOverlayService` from `@africanies/africanies-core` uses a host URL/history adapter.
 
 ## Toasts
 

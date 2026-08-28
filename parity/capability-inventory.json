@@ -1,0 +1,1430 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "repository": "https://github.com/A-I-E-S/angular-web-sdk",
+    "revision": "8242f482129359b7c4d59e36ec9fc1dcc7d0a81d",
+    "declarationHeads": 485
+  },
+  "generatedAt": "2026-08-28T19:50:53.959Z",
+  "columns": [
+    "domain",
+    "angularPackage",
+    "angularDeclarations",
+    "vanillaPackage",
+    "vanillaExports",
+    "status",
+    "evidence"
+  ],
+  "rows": [
+    {
+      "domain": "models.api",
+      "angularPackage": "@africanies/africanies-models",
+      "angularDeclarations": [
+        "ApiErrorDetailModel",
+        "ApiJsonObjectModel",
+        "ApiJsonPrimitive",
+        "ApiJsonValue",
+        "ApiResponseModel",
+        "DEFAULT_PAGE_SIZE",
+        "NOTIFICATION_PAGE_SIZE",
+        "PAGINATION_PAGE_SIZES",
+        "PaginationMetaModel",
+        "PaginationPageSize",
+        "PaginationQueryParamsModel",
+        "ResourceId"
+      ],
+      "vanillaPackage": "@africanies/africanies-models",
+      "vanillaExports": [
+        "ApiErrorDetailModel",
+        "ApiJsonObjectModel",
+        "ApiJsonPrimitive",
+        "ApiJsonValue",
+        "ApiResponseModel",
+        "DEFAULT_PAGE_SIZE",
+        "NOTIFICATION_PAGE_SIZE",
+        "PAGINATION_PAGE_SIZES",
+        "PaginationMetaModel",
+        "PaginationPageSize",
+        "PaginationQueryParamsModel",
+        "ResourceId"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:models.api"
+      ]
+    },
+    {
+      "domain": "models.async",
+      "angularPackage": "@africanies/africanies-models",
+      "angularDeclarations": [
+        "AsyncQueryStateModel"
+      ],
+      "vanillaPackage": "@africanies/africanies-models",
+      "vanillaExports": [
+        "AsyncQueryStateModel"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:models.async"
+      ]
+    },
+    {
+      "domain": "models.auth-user",
+      "angularPackage": "@africanies/africanies-models",
+      "angularDeclarations": [
+        "AccountType",
+        "ChangePasswordRequestModel",
+        "ForgotPasswordRequestModel",
+        "PlanType",
+        "ShippingType",
+        "UserAccountManagerModel",
+        "UserBusinessAccountModel",
+        "UserCountryModel",
+        "UserGatewayPayloadModel",
+        "UserModel",
+        "UserModelType",
+        "UserPaymentPayloadModel",
+        "UserPlanModel",
+        "UserPlanPackageModel",
+        "UserStateModel",
+        "UserSubscriptionModel"
+      ],
+      "vanillaPackage": "@africanies/africanies-models",
+      "vanillaExports": [
+        "AccountType",
+        "ChangePasswordRequestModel",
+        "ForgotPasswordRequestModel",
+        "PlanType",
+        "ShippingType",
+        "UserAccountManagerModel",
+        "UserBusinessAccountModel",
+        "UserCountryModel",
+        "UserGatewayPayloadModel",
+        "UserModel",
+        "UserModelType",
+        "UserPaymentPayloadModel",
+        "UserPlanModel",
+        "UserPlanPackageModel",
+        "UserStateModel",
+        "UserSubscriptionModel"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:models.auth-user"
+      ]
+    },
+    {
+      "domain": "models.catalogs",
+      "angularPackage": "@africanies/africanies-models",
+      "angularDeclarations": [
+        "CountryModel",
+        "CountryStateModel",
+        "DocumentModel",
+        "PlanModel",
+        "PlanPackageModel",
+        "ProductModel",
+        "ServiceModel",
+        "WarehouseModel",
+        "WarehouseStateModel"
+      ],
+      "vanillaPackage": "@africanies/africanies-models",
+      "vanillaExports": [
+        "CountryModel",
+        "CountryStateModel",
+        "DocumentModel",
+        "PlanModel",
+        "PlanPackageModel",
+        "ProductModel",
+        "ServiceModel",
+        "WarehouseModel",
+        "WarehouseStateModel"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:models.catalogs"
+      ]
+    },
+    {
+      "domain": "models.currency-payment",
+      "angularPackage": "@africanies/africanies-models",
+      "angularDeclarations": [
+        "CurrencyCreateRequestModel",
+        "CurrencyDeleteRequestModel",
+        "CurrencyFlag01",
+        "CurrencyModel",
+        "CurrencyPaymentMethodModel",
+        "CurrencyPaymentMethodPivotModel",
+        "CurrencyUpdateRequestModel",
+        "PaymentMethodCurrencyModel",
+        "PaymentMethodFlag01",
+        "PaymentMethodModel",
+        "PaymentMethodUpdateRequestModel"
+      ],
+      "vanillaPackage": "@africanies/africanies-models",
+      "vanillaExports": [
+        "CurrencyCreateRequestModel",
+        "CurrencyDeleteRequestModel",
+        "CurrencyFlag01",
+        "CurrencyModel",
+        "CurrencyPaymentMethodModel",
+        "CurrencyPaymentMethodPivotModel",
+        "CurrencyUpdateRequestModel",
+        "PaymentMethodCurrencyModel",
+        "PaymentMethodFlag01",
+        "PaymentMethodModel",
+        "PaymentMethodUpdateRequestModel"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:models.currency-payment"
+      ]
+    },
+    {
+      "domain": "models.shipping",
+      "angularPackage": "@africanies/africanies-models",
+      "angularDeclarations": [
+        "ShipmentMethodModel",
+        "ShipmentMethodZoneLinkModel",
+        "ShipmentMethodZonePageModel",
+        "ShipmentZoneModel",
+        "ShippingMode",
+        "ZoneModel"
+      ],
+      "vanillaPackage": "@africanies/africanies-models",
+      "vanillaExports": [
+        "ShipmentMethodModel",
+        "ShipmentMethodZoneLinkModel",
+        "ShipmentMethodZonePageModel",
+        "ShipmentZoneModel",
+        "ShippingMode",
+        "ZoneModel"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:models.shipping"
+      ]
+    },
+    {
+      "domain": "models.files-notifications",
+      "angularPackage": "@africanies/africanies-models",
+      "angularDeclarations": [
+        "FileReadModel",
+        "FileReadRequestModel",
+        "NotificationInboxItemModel",
+        "NotificationMarkAllReadRequestModel",
+        "NotificationMarkReadSingleRequestModel",
+        "NotificationModel",
+        "NotificationPayloadModel"
+      ],
+      "vanillaPackage": "@africanies/africanies-models",
+      "vanillaExports": [
+        "FileReadModel",
+        "FileReadRequestModel",
+        "NotificationInboxItemModel",
+        "NotificationMarkAllReadRequestModel",
+        "NotificationMarkReadSingleRequestModel",
+        "NotificationModel",
+        "NotificationPayloadModel"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:models.files-notifications"
+      ]
+    },
+    {
+      "domain": "models.delivery-vendors",
+      "angularPackage": "@africanies/africanies-models",
+      "angularDeclarations": [
+        "BOX_DELIVERY_VENDORS",
+        "BoxDeliveryVendorId",
+        "DELIVERY_VENDORS",
+        "DELIVERY_VENDOR_OPTIONS",
+        "DeliveryVendorId",
+        "EXPORT_DELIVERY_VENDORS",
+        "ExportDeliveryVendorId",
+        "deliveryVendorLabel",
+        "isKnownDeliveryVendor",
+        "normalizeDeliveryVendor",
+        "normalizeDeliveryVendorForForm"
+      ],
+      "vanillaPackage": "@africanies/africanies-models",
+      "vanillaExports": [
+        "BOX_DELIVERY_VENDORS",
+        "BoxDeliveryVendorId",
+        "DELIVERY_VENDORS",
+        "DELIVERY_VENDOR_OPTIONS",
+        "DeliveryVendorId",
+        "EXPORT_DELIVERY_VENDORS",
+        "ExportDeliveryVendorId",
+        "deliveryVendorLabel",
+        "isKnownDeliveryVendor",
+        "normalizeDeliveryVendor",
+        "normalizeDeliveryVendorForForm"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:models.delivery-vendors"
+      ]
+    },
+    {
+      "domain": "models.filters",
+      "angularPackage": "@africanies/africanies-models",
+      "angularDeclarations": [
+        "DEFAULT_FILTER_TRANSPORT",
+        "FILTER_CONFIGS",
+        "FilterConfigId",
+        "FilterFieldModel",
+        "FilterFieldType",
+        "FilterOptionModel",
+        "FilterOptionsSource",
+        "FilterParamsModel",
+        "FilterQueryBag",
+        "FilterStateModel",
+        "FilterTransport",
+        "ModuleFilterConfigModel",
+        "clearFilterField",
+        "cloneFilterState",
+        "emptyFilterState",
+        "filterQueryKeys",
+        "fromFilterParams",
+        "hasFilterParams",
+        "resetFilterState",
+        "resolveFilterTransport",
+        "shipmentTrackingItemFilterConfig",
+        "toFilterParams",
+        "trackShipmentsFilterConfig",
+        "updateShipmentsFilterConfig",
+        "usersFilterConfig"
+      ],
+      "vanillaPackage": "@africanies/africanies-models",
+      "vanillaExports": [
+        "DEFAULT_FILTER_TRANSPORT",
+        "FILTER_CONFIGS",
+        "FilterConfigId",
+        "FilterFieldModel",
+        "FilterFieldType",
+        "FilterOptionModel",
+        "FilterOptionsSource",
+        "FilterParamsModel",
+        "FilterQueryBag",
+        "FilterStateModel",
+        "FilterTransport",
+        "ModuleFilterConfigModel",
+        "clearFilterField",
+        "cloneFilterState",
+        "emptyFilterState",
+        "filterQueryKeys",
+        "fromFilterParams",
+        "hasFilterParams",
+        "resetFilterState",
+        "resolveFilterTransport",
+        "shipmentTrackingItemFilterConfig",
+        "toFilterParams",
+        "trackShipmentsFilterConfig",
+        "updateShipmentsFilterConfig",
+        "usersFilterConfig"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:models.filters"
+      ]
+    },
+    {
+      "domain": "models.mode-pagination",
+      "angularPackage": "@africanies/africanies-models",
+      "angularDeclarations": [
+        "ModeAppType",
+        "ModeConfigDataModel",
+        "ModeCurrencyCode",
+        "ModeDimensionUnit",
+        "ModeMassUnit",
+        "ModeRegionConfigModel",
+        "ModeSfnConfigModel",
+        "ModeStnConfigModel"
+      ],
+      "vanillaPackage": "@africanies/africanies-models",
+      "vanillaExports": [
+        "ModeAppType",
+        "ModeConfigDataModel",
+        "ModeCurrencyCode",
+        "ModeDimensionUnit",
+        "ModeMassUnit",
+        "ModeRegionConfigModel",
+        "ModeSfnConfigModel",
+        "ModeStnConfigModel"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:models.mode-pagination"
+      ]
+    },
+    {
+      "domain": "storage",
+      "angularPackage": "@africanies/africanies-storage",
+      "angularDeclarations": [
+        "AFRICANIES_ACCESS_TOKEN_KEY",
+        "AFRICANIES_MODE_CONFIG_KEY",
+        "AFRICANIES_SHIPPING_MODE_KEY",
+        "AFRICANIES_THEME_KEY",
+        "LocalStorageService",
+        "STORAGE_TOKEN",
+        "SessionStorageService",
+        "StorageService",
+        "provideLocalStorage",
+        "provideSessionStorage"
+      ],
+      "vanillaPackage": "@africanies/africanies-storage",
+      "vanillaExports": [
+        "AFRICANIES_ACCESS_TOKEN_KEY",
+        "AFRICANIES_MODE_CONFIG_KEY",
+        "AFRICANIES_SHIPPING_MODE_KEY",
+        "AFRICANIES_THEME_KEY",
+        "LocalStorageService",
+        "STORAGE_TOKEN",
+        "SessionStorageService",
+        "StorageService",
+        "provideLocalStorage",
+        "provideSessionStorage"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:storage"
+      ]
+    },
+    {
+      "domain": "core.config-http",
+      "angularPackage": "@africanies/africanies-core",
+      "angularDeclarations": [
+        "AFRICANIES_HTTP_TOAST",
+        "AFRICANIES_SDK_CONFIG",
+        "AfricaniesHttpClientOptions",
+        "AfricaniesHttpToastHandler",
+        "AfricaniesQueryClientDefaults",
+        "AfricaniesSdkConfig",
+        "AfricaniesSdkHttpToasts",
+        "ApiClient",
+        "ApiRequestOptions",
+        "HttpResponseCache",
+        "ListFetchKind",
+        "ListFetchReason",
+        "PAYMENT_METHOD_READ_PATH",
+        "PAYMENT_METHOD_UPDATE_PATH",
+        "PaymentMethodService",
+        "ResourceQueryParams",
+        "TOAST_HTTP_OPTIONS",
+        "ToastHttpOptions",
+        "USER_CHANGE_PASSWORD_PATH",
+        "USER_LOGOUT_FROM_ALL_SESSIONS_PATH",
+        "USER_PATH",
+        "UserService",
+        "asArray",
+        "asBoolean",
+        "asNullableBoolean",
+        "asNullableFlag01",
+        "asNullableNumber",
+        "asNullableString",
+        "asNumber",
+        "asRecord",
+        "asString",
+        "buildResourcePath",
+        "buildResourceQueryParams",
+        "createAfricaniesQueryClientDefaults",
+        "fieldErrorsMap",
+        "formatApiErrorMessage",
+        "httpToastInterceptor",
+        "isLaravelValidationBag",
+        "joinApiErrorMessages",
+        "listFetchKind",
+        "mapApiJsonList",
+        "mapApiJsonValue",
+        "mapArray",
+        "mapLaravelValidationBag",
+        "mapList",
+        "mapPaymentMethod",
+        "mapPaymentMethodCurrency",
+        "mapPaymentMethodList",
+        "mapResourcePayload",
+        "mapUser",
+        "mapUserAccountManager",
+        "mapUserBusinessAccount",
+        "mapUserCountry",
+        "mapUserCountryState",
+        "mapUserGatewayPayload",
+        "mapUserPaymentPayload",
+        "mapUserPlan",
+        "mapUserPlanPackage",
+        "mapUserStateLabel",
+        "mapUserSubscription",
+        "normalize",
+        "normalizePagination",
+        "provideAfricaniesHttpClient",
+        "provideAfricaniesQueryDefaults",
+        "provideAfricaniesSdk",
+        "resourceCacheTtlMs",
+        "toFlag01",
+        "toPaymentMethodFlag01",
+        "toPaymentMethodUpdateBody",
+        "unwrapLaravelPaginator",
+        "withToast"
+      ],
+      "vanillaPackage": "@africanies/africanies-core",
+      "vanillaExports": [
+        "ApiClient",
+        "HttpResponseCache",
+        "PAYMENT_METHOD_READ_PATH",
+        "PAYMENT_METHOD_UPDATE_PATH",
+        "PaymentMethodService",
+        "ToastHttpOptions",
+        "USER_CHANGE_PASSWORD_PATH",
+        "USER_LOGOUT_FROM_ALL_SESSIONS_PATH",
+        "USER_PATH",
+        "UserService",
+        "asArray",
+        "asBoolean",
+        "asNullableBoolean",
+        "asNullableFlag01",
+        "asNullableNumber",
+        "asNullableString",
+        "asNumber",
+        "asRecord",
+        "asString",
+        "buildResourcePath",
+        "buildResourceQueryParams",
+        "createAfricaniesQueryClientDefaults",
+        "fieldErrorsMap",
+        "formatApiErrorMessage",
+        "isLaravelValidationBag",
+        "joinApiErrorMessages",
+        "listFetchKind",
+        "mapApiJsonList",
+        "mapApiJsonValue",
+        "mapArray",
+        "mapLaravelValidationBag",
+        "mapList",
+        "mapPaymentMethod",
+        "mapPaymentMethodCurrency",
+        "mapPaymentMethodList",
+        "mapResourcePayload",
+        "mapUser",
+        "mapUserAccountManager",
+        "mapUserBusinessAccount",
+        "mapUserCountry",
+        "mapUserCountryState",
+        "mapUserGatewayPayload",
+        "mapUserPaymentPayload",
+        "mapUserPlan",
+        "mapUserPlanPackage",
+        "mapUserStateLabel",
+        "mapUserSubscription",
+        "normalize",
+        "normalizePagination",
+        "provideAfricaniesHttpClient",
+        "provideAfricaniesQueryDefaults",
+        "provideAfricaniesSdk",
+        "resourceCacheTtlMs",
+        "toFlag01",
+        "toPaymentMethodFlag01",
+        "toPaymentMethodUpdateBody",
+        "unwrapLaravelPaginator",
+        "withToast"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:core.config-http"
+      ]
+    },
+    {
+      "domain": "core.auth",
+      "angularPackage": "@africanies/africanies-core",
+      "angularDeclarations": [
+        "AUTH_FORGOT_PASSWORD_PATH",
+        "AuthService",
+        "AuthTokenService",
+        "authInterceptor",
+        "isValidEmail"
+      ],
+      "vanillaPackage": "@africanies/africanies-core",
+      "vanillaExports": [
+        "AUTH_FORGOT_PASSWORD_PATH",
+        "AuthService",
+        "AuthTokenService",
+        "isValidEmail"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:core.auth"
+      ]
+    },
+    {
+      "domain": "core.mode",
+      "angularPackage": "@africanies/africanies-core",
+      "angularDeclarations": [
+        "MODE_CONFIG_PATH",
+        "ModeConfigService",
+        "SHIPPING_MODE_OVERRIDE",
+        "ShippingModeChangeGuard",
+        "ShippingModeService",
+        "asShippingMode",
+        "mapModeConfigData",
+        "provideModeConfig",
+        "resolveModeRegionConfig",
+        "shipmentModeInterceptor",
+        "withShippingMode"
+      ],
+      "vanillaPackage": "@africanies/africanies-core",
+      "vanillaExports": [
+        "MODE_CONFIG_PATH",
+        "ModeConfigService",
+        "ShippingModeChangeGuard",
+        "ShippingModeService",
+        "asShippingMode",
+        "mapModeConfigData",
+        "provideModeConfig",
+        "resolveModeRegionConfig",
+        "withShippingMode"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:core.mode"
+      ]
+    },
+    {
+      "domain": "core.country",
+      "angularPackage": "@africanies/africanies-core",
+      "angularDeclarations": [
+        "COUNTRY_FLAG_CDN_BASE",
+        "COUNTRY_READ_PATH",
+        "CountryFlagFormat",
+        "CountryFlagUrlOptions",
+        "CountrySelectOption",
+        "CountryService",
+        "countryFlagUrl",
+        "mapCountry",
+        "mapCountryList",
+        "mapCountrySelectOptions",
+        "mapCountryState"
+      ],
+      "vanillaPackage": "@africanies/africanies-core",
+      "vanillaExports": [
+        "COUNTRY_FLAG_CDN_BASE",
+        "COUNTRY_READ_PATH",
+        "CountryService",
+        "countryFlagUrl",
+        "mapCountry",
+        "mapCountryList",
+        "mapCountrySelectOptions",
+        "mapCountryState"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:core.country"
+      ]
+    },
+    {
+      "domain": "core.currency",
+      "angularPackage": "@africanies/africanies-core",
+      "angularDeclarations": [
+        "CURRENCY_CREATE_PATH",
+        "CURRENCY_DELETE_PATH",
+        "CURRENCY_READ_PATH",
+        "CURRENCY_UPDATE_PATH",
+        "CurrencyService",
+        "mapCurrency",
+        "mapCurrencyList",
+        "mapCurrencyPaymentMethod",
+        "mapCurrencyPaymentMethodPivot",
+        "toCurrencyCreateBody",
+        "toCurrencyDeleteBody",
+        "toCurrencyFlag01",
+        "toCurrencyUpdateBody"
+      ],
+      "vanillaPackage": "@africanies/africanies-core",
+      "vanillaExports": [
+        "CURRENCY_CREATE_PATH",
+        "CURRENCY_DELETE_PATH",
+        "CURRENCY_READ_PATH",
+        "CURRENCY_UPDATE_PATH",
+        "CurrencyService",
+        "mapCurrency",
+        "mapCurrencyList",
+        "mapCurrencyPaymentMethod",
+        "mapCurrencyPaymentMethodPivot",
+        "toCurrencyCreateBody",
+        "toCurrencyDeleteBody",
+        "toCurrencyFlag01",
+        "toCurrencyUpdateBody"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:core.currency"
+      ]
+    },
+    {
+      "domain": "core.document",
+      "angularPackage": "@africanies/africanies-core",
+      "angularDeclarations": [
+        "DOCUMENT_READ_PATH",
+        "DocumentService",
+        "mapDocument",
+        "mapDocumentList"
+      ],
+      "vanillaPackage": "@africanies/africanies-core",
+      "vanillaExports": [
+        "DOCUMENT_READ_PATH",
+        "DocumentService",
+        "mapDocument",
+        "mapDocumentList"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:core.document"
+      ]
+    },
+    {
+      "domain": "core.file",
+      "angularPackage": "@africanies/africanies-core",
+      "angularDeclarations": [
+        "FILE_READ_MULTIPLE_PARAM",
+        "FILE_READ_PATH",
+        "FileService",
+        "mapFileRead",
+        "mapFileReadList"
+      ],
+      "vanillaPackage": "@africanies/africanies-core",
+      "vanillaExports": [
+        "FILE_READ_MULTIPLE_PARAM",
+        "FILE_READ_PATH",
+        "FileService",
+        "mapFileRead",
+        "mapFileReadList"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:core.file"
+      ]
+    },
+    {
+      "domain": "core.filters",
+      "angularPackage": "@africanies/africanies-core",
+      "angularDeclarations": [
+        "FilterOptionLists",
+        "FilterOptionsResolver",
+        "FilterSelectOption",
+        "collectFilterOptionsSources",
+        "collectResolvableSelectFields",
+        "mapShipmentMethodFilterOptions",
+        "mapWarehouseFilterOptions",
+        "mergeFilterOptionLists"
+      ],
+      "vanillaPackage": "@africanies/africanies-core",
+      "vanillaExports": [
+        "FilterOptionsResolver",
+        "collectFilterOptionsSources",
+        "collectResolvableSelectFields",
+        "mapShipmentMethodFilterOptions",
+        "mapWarehouseFilterOptions",
+        "mergeFilterOptionLists"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:core.filters"
+      ]
+    },
+    {
+      "domain": "core.notification",
+      "angularPackage": "@africanies/africanies-core",
+      "angularDeclarations": [
+        "NOTIFICATION_READ_PATH",
+        "NOTIFICATION_UPDATE_PATH",
+        "NotificationService",
+        "mapNotification",
+        "mapNotificationInboxItem",
+        "mapNotificationList",
+        "mapNotificationPayload",
+        "resolveNotificationLinkForMode"
+      ],
+      "vanillaPackage": "@africanies/africanies-core",
+      "vanillaExports": [
+        "NOTIFICATION_READ_PATH",
+        "NOTIFICATION_UPDATE_PATH",
+        "NotificationService",
+        "mapNotification",
+        "mapNotificationInboxItem",
+        "mapNotificationList",
+        "mapNotificationPayload",
+        "resolveNotificationLinkForMode"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:core.notification"
+      ]
+    },
+    {
+      "domain": "core.plan-product",
+      "angularPackage": "@africanies/africanies-core",
+      "angularDeclarations": [
+        "PLAN_READ_PATH",
+        "PRODUCT_READ_PATH",
+        "PlanService",
+        "ProductService",
+        "mapPlan",
+        "mapPlanList",
+        "mapPlanPackage",
+        "mapProduct",
+        "mapProductList"
+      ],
+      "vanillaPackage": "@africanies/africanies-core",
+      "vanillaExports": [
+        "PLAN_READ_PATH",
+        "PRODUCT_READ_PATH",
+        "PlanService",
+        "ProductService",
+        "mapPlan",
+        "mapPlanList",
+        "mapPlanPackage",
+        "mapProduct",
+        "mapProductList"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:core.plan-product"
+      ]
+    },
+    {
+      "domain": "core.shipping-catalogs",
+      "angularPackage": "@africanies/africanies-core",
+      "angularDeclarations": [
+        "SERVICE_READ_PATH",
+        "SHIPMENT_METHOD_READ_PATH",
+        "ServiceService",
+        "ShipmentMethodService",
+        "WAREHOUSE_READ_PATH",
+        "WarehouseService",
+        "ZONE_READ_PATH",
+        "ZoneService",
+        "mapService",
+        "mapServiceList",
+        "mapShipmentMethod",
+        "mapShipmentMethodList",
+        "mapShipmentMethodZoneLink",
+        "mapShipmentMethodZonePage",
+        "mapShipmentZone",
+        "mapWarehouse",
+        "mapWarehouseCountry",
+        "mapWarehouseList",
+        "mapWarehouseState",
+        "mapZone",
+        "mapZoneList"
+      ],
+      "vanillaPackage": "@africanies/africanies-core",
+      "vanillaExports": [
+        "SERVICE_READ_PATH",
+        "SHIPMENT_METHOD_READ_PATH",
+        "ServiceService",
+        "ShipmentMethodService",
+        "WAREHOUSE_READ_PATH",
+        "WarehouseService",
+        "ZONE_READ_PATH",
+        "ZoneService",
+        "mapService",
+        "mapServiceList",
+        "mapShipmentMethod",
+        "mapShipmentMethodList",
+        "mapShipmentMethodZoneLink",
+        "mapShipmentMethodZonePage",
+        "mapShipmentZone",
+        "mapWarehouse",
+        "mapWarehouseCountry",
+        "mapWarehouseList",
+        "mapWarehouseState",
+        "mapZone",
+        "mapZoneList"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:core.shipping-catalogs"
+      ]
+    },
+    {
+      "domain": "core.browser-overlays",
+      "angularPackage": "@africanies/africanies-core",
+      "angularDeclarations": [
+        "CsvCellValue",
+        "DRAWER_SERVICE",
+        "DownloadCsvOptions",
+        "MODAL_SERVICE",
+        "OVERLAY_ROUTE_CONFIGS",
+        "OverlayHandle",
+        "OverlayOpener",
+        "OverlayRouteConfig",
+        "OverlayRouteEntry",
+        "RouteOverlayService",
+        "copyToClipboard",
+        "csvCell",
+        "downloadCsv",
+        "provideOverlayRoutes",
+        "toCsvString"
+      ],
+      "vanillaPackage": "@africanies/africanies-core",
+      "vanillaExports": [
+        "RouteOverlayService",
+        "copyToClipboard",
+        "csvCell",
+        "downloadCsv",
+        "provideOverlayRoutes",
+        "toCsvString"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:core.browser-overlays"
+      ]
+    },
+    {
+      "domain": "theme",
+      "angularPackage": "@africanies/africanies-theme",
+      "angularDeclarations": [
+        "MODE_COLOR_SAFELIST",
+        "ModeColorClasses",
+        "ModeColorService",
+        "Theme",
+        "ThemeService"
+      ],
+      "vanillaPackage": "@africanies/africanies-theme",
+      "vanillaExports": [
+        "MODE_COLOR_SAFELIST",
+        "ModeColorClasses",
+        "ModeColorService",
+        "Theme",
+        "ThemeService"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:theme"
+      ]
+    },
+    {
+      "domain": "icons",
+      "angularPackage": "@africanies/africanies-icons",
+      "angularDeclarations": [
+        "AFRICANIES_ICON_SPRITE_URL",
+        "AfricaniesIconComponent",
+        "ICON_NAMES",
+        "IconName",
+        "IconRegistryService"
+      ],
+      "vanillaPackage": "@africanies/africanies-icons",
+      "vanillaExports": [
+        "AFRICANIES_ICON_SPRITE_URL",
+        "AfricaniesIconComponent",
+        "ICON_NAMES",
+        "IconName",
+        "IconRegistryService"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:icons"
+      ]
+    },
+    {
+      "domain": "ui.actions",
+      "angularPackage": "@africanies/africanies-ui",
+      "angularDeclarations": [
+        "ActionMenuComponent",
+        "ActionMenuTriggerDirective",
+        "AfricaniesMenuItem",
+        "ButtonComponent",
+        "ButtonSize",
+        "ButtonVariant",
+        "CopyButtonComponent"
+      ],
+      "vanillaPackage": "@africanies/africanies-ui",
+      "vanillaExports": [
+        "ActionMenuComponent",
+        "ActionMenuTriggerComponent",
+        "ButtonComponent",
+        "ButtonSize",
+        "ButtonVariant",
+        "CopyButtonComponent"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:ui.actions"
+      ]
+    },
+    {
+      "domain": "ui.feedback",
+      "angularPackage": "@africanies/africanies-ui",
+      "angularDeclarations": [
+        "AsyncStateComponent",
+        "EmptyStateComponent",
+        "ErrorIndicatorComponent",
+        "ErrorStateComponent",
+        "LoadingStateComponent",
+        "LoadingStateMode",
+        "TOAST_DURATION_MS",
+        "TOAST_ICONS",
+        "ToastItem",
+        "ToastService",
+        "ToastShowOptions",
+        "ToastVariant",
+        "provideAfricaniesToasts",
+        "toastFingerprint"
+      ],
+      "vanillaPackage": "@africanies/africanies-ui",
+      "vanillaExports": [
+        "AsyncStateComponent",
+        "EmptyStateComponent",
+        "ErrorIndicatorComponent",
+        "ErrorStateComponent",
+        "LoadingStateComponent",
+        "LoadingStateMode",
+        "TOAST_DURATION_MS",
+        "TOAST_ICONS",
+        "ToastService",
+        "toastFingerprint"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:ui.feedback"
+      ]
+    },
+    {
+      "domain": "ui.accordion-alert-chip",
+      "angularPackage": "@africanies/africanies-ui",
+      "angularDeclarations": [
+        "AccordionComponent",
+        "AccordionSize",
+        "AlertComponent",
+        "AlertVariant",
+        "ChipComponent",
+        "ChipSize",
+        "ChipVariant"
+      ],
+      "vanillaPackage": "@africanies/africanies-ui",
+      "vanillaExports": [
+        "AccordionComponent",
+        "AccordionSize",
+        "AlertComponent",
+        "AlertVariant",
+        "ChipComponent"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:ui.accordion-alert-chip"
+      ]
+    },
+    {
+      "domain": "ui.identity-content",
+      "angularPackage": "@africanies/africanies-ui",
+      "angularDeclarations": [
+        "AFRICANIES_BRAND_LOGO_MINI_URL",
+        "AFRICANIES_BRAND_LOGO_URL",
+        "AvatarComponent",
+        "AvatarMenuComponent",
+        "AvatarSize",
+        "BrandLogoComponent",
+        "BrandLogoSize",
+        "CarrierLogoComponent",
+        "CarrierLogoSize",
+        "CarrierLogoSlug",
+        "ContentStackComponent",
+        "deliveryVendorOptionsForStoredValue",
+        "deliveryVendorSelectOptions",
+        "deliveryVendorSelected",
+        "normalizeCarrierLogoSlug"
+      ],
+      "vanillaPackage": "@africanies/africanies-ui",
+      "vanillaExports": [
+        "AvatarComponent",
+        "AvatarMenuComponent",
+        "BrandLogoComponent",
+        "CarrierLogoComponent",
+        "ContentStackComponent",
+        "deliveryVendorOptionsForStoredValue",
+        "deliveryVendorSelectOptions",
+        "deliveryVendorSelected",
+        "normalizeCarrierLogoSlug"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:ui.identity-content"
+      ]
+    },
+    {
+      "domain": "ui.help",
+      "angularPackage": "@africanies/africanies-ui",
+      "angularDeclarations": [
+        "InfoPopoverComponent",
+        "InfoPopoverContentDirective",
+        "InfoPopoverPlacement",
+        "InfoPopoverTriggerDirective",
+        "TooltipComponent",
+        "TooltipPlacement",
+        "TooltipTriggerDirective"
+      ],
+      "vanillaPackage": "@africanies/africanies-ui",
+      "vanillaExports": [
+        "InfoPopoverComponent",
+        "TooltipComponent"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:ui.help"
+      ]
+    },
+    {
+      "domain": "ui.filters",
+      "angularPackage": "@africanies/africanies-ui",
+      "angularDeclarations": [
+        "FilterDrawerData",
+        "FilterDrawerPanel",
+        "FilterDrawerResult",
+        "FilterDrawerService",
+        "FilterQueryService"
+      ],
+      "vanillaPackage": "@africanies/africanies-ui",
+      "vanillaExports": [
+        "FilterDrawerPanel",
+        "FilterDrawerService",
+        "FilterQueryService"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:ui.filters"
+      ]
+    },
+    {
+      "domain": "ui.overlay",
+      "angularPackage": "@africanies/africanies-ui",
+      "angularDeclarations": [
+        "AfricaniesOverlayRef",
+        "ConfirmDialogComponent",
+        "ConfirmOptions",
+        "ConfirmService",
+        "ConfirmWork",
+        "DrawerService",
+        "MODAL_SIZE_PANEL_CLASS",
+        "ModalOpenConfig",
+        "ModalService",
+        "ModalSize",
+        "OVERLAY_DATA",
+        "OverlayFooterDirective",
+        "OverlayFrameComponent",
+        "OverlayHeaderDirective",
+        "OverlayOpenConfig",
+        "provideAfricaniesUiOverlays"
+      ],
+      "vanillaPackage": "@africanies/africanies-ui",
+      "vanillaExports": [
+        "AfricaniesOverlayRef",
+        "ConfirmDialogComponent",
+        "ConfirmService",
+        "DrawerService",
+        "MODAL_SIZE_PANEL_CLASS",
+        "ModalService",
+        "OverlayFrameComponent"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:ui.overlay"
+      ]
+    },
+    {
+      "domain": "ui.forms-basic",
+      "angularPackage": "@africanies/africanies-ui",
+      "angularDeclarations": [
+        "CheckboxComponent",
+        "DatePickerComponent",
+        "NumberInputComponent",
+        "RadioComponent",
+        "RadioOption",
+        "SelectComponent",
+        "SelectCreateConfig",
+        "SelectOption",
+        "SelectSize",
+        "TextInputComponent",
+        "TextInputType",
+        "TextareaComponent",
+        "ToggleComponent"
+      ],
+      "vanillaPackage": "@africanies/africanies-ui",
+      "vanillaExports": [
+        "CheckboxComponent",
+        "DatePickerComponent",
+        "NumberInputComponent",
+        "RadioComponent",
+        "SelectComponent",
+        "TextInputComponent",
+        "TextareaComponent",
+        "ToggleComponent"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:ui.forms-basic"
+      ]
+    },
+    {
+      "domain": "ui.forms-advanced",
+      "angularPackage": "@africanies/africanies-ui",
+      "angularDeclarations": [
+        "AddressComponent",
+        "AddressInputComponent",
+        "AddressPlace",
+        "AddressPrediction",
+        "FileUploadComponent",
+        "FileUploadResult",
+        "FileUploadVariant",
+        "GOOGLE_PLACES_CONFIG",
+        "GooglePlacesConfig",
+        "GooglePlacesService",
+        "OtpInputComponent",
+        "OtpInputVariant",
+        "SearchComboboxBadge",
+        "SearchComboboxBadgeFn",
+        "SearchComboboxComponent",
+        "SearchComboboxLabelFn",
+        "SearchComboboxMarkFn",
+        "SearchComboboxSearchFn",
+        "SearchComboboxSubtitleFn",
+        "SearchComboboxTrackFn",
+        "acceptLabels",
+        "fileExtensionLabel",
+        "fileMatchesAccept",
+        "provideGooglePlaces"
+      ],
+      "vanillaPackage": "@africanies/africanies-ui",
+      "vanillaExports": [
+        "AddressInputComponent",
+        "FileUploadComponent",
+        "GooglePlacesService",
+        "OtpInputComponent",
+        "SearchComboboxComponent",
+        "acceptLabels",
+        "fileExtensionLabel",
+        "fileMatchesAccept"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:ui.forms-advanced"
+      ]
+    },
+    {
+      "domain": "ui.navigation",
+      "angularPackage": "@africanies/africanies-ui",
+      "angularDeclarations": [
+        "AfricaniesNavItem",
+        "AfricaniesSideNavItem",
+        "BreadcrumbComponent",
+        "ContentBackTarget",
+        "HeaderBackTarget",
+        "SegmentComponent",
+        "ShippingModeSwitchComponent",
+        "SideNavComponent",
+        "TabDefContext",
+        "TabDefDirective",
+        "TabsComponent",
+        "buildBreadcrumbsFromSideNav",
+        "isCatalogRootRoute",
+        "isNavItemActive",
+        "isNestedChildRoute",
+        "navItemUrlTree",
+        "normalizeNavPath",
+        "resolveCatalogRootLink",
+        "resolveContentBackTarget",
+        "resolveHeaderBackTarget",
+        "resolveParentPathFromRootSnapshot"
+      ],
+      "vanillaPackage": "@africanies/africanies-ui",
+      "vanillaExports": [
+        "BreadcrumbComponent",
+        "SegmentComponent",
+        "ShippingModeSwitchComponent",
+        "SideNavComponent",
+        "TabsComponent",
+        "buildBreadcrumbsFromSideNav",
+        "isCatalogRootRoute",
+        "isNavItemActive",
+        "isNestedChildRoute",
+        "navItemUrlTree",
+        "normalizeNavPath",
+        "resolveCatalogRootLink",
+        "resolveContentBackTarget",
+        "resolveHeaderBackTarget",
+        "resolveParentPathFromRootSnapshot"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:ui.navigation"
+      ]
+    },
+    {
+      "domain": "ui.layout",
+      "angularPackage": "@africanies/africanies-ui",
+      "angularDeclarations": [
+        "AppShellComponent",
+        "AppShellContentHeaderComponent",
+        "AppShellContentWidth",
+        "AppShellHeaderComponent",
+        "AppShellHeaderDensity",
+        "AppShellHeaderEndDirective",
+        "AppShellHeaderSlotDirective",
+        "AppShellHeaderStartDirective",
+        "AppShellLayoutPreview",
+        "HeaderGreeting",
+        "HeaderGreetingPeriod",
+        "HeaderWeather",
+        "HeaderWeatherKind",
+        "PageHeaderComponent",
+        "headerGreetingFirstName",
+        "headerGreetingPeriod",
+        "pickHeaderGreeting"
+      ],
+      "vanillaPackage": "@africanies/africanies-ui",
+      "vanillaExports": [
+        "AppShellComponent",
+        "AppShellContentHeaderComponent",
+        "AppShellHeaderComponent",
+        "PageHeaderComponent",
+        "headerGreetingFirstName",
+        "headerGreetingPeriod",
+        "pickHeaderGreeting"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:ui.layout"
+      ]
+    },
+    {
+      "domain": "ui.notifications",
+      "angularPackage": "@africanies/africanies-ui",
+      "angularDeclarations": [
+        "AfricaniesNotification",
+        "NotificationDrawerData",
+        "NotificationDrawerPanel",
+        "NotificationDrawerResult",
+        "NotificationDrawerService",
+        "NotificationPageResult"
+      ],
+      "vanillaPackage": "@africanies/africanies-ui",
+      "vanillaExports": [
+        "NotificationDrawerPanel",
+        "NotificationDrawerService"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:ui.notifications"
+      ]
+    },
+    {
+      "domain": "ui.table",
+      "angularPackage": "@africanies/africanies-ui",
+      "angularDeclarations": [
+        "CellDefContext",
+        "CellDefDirective",
+        "HeaderCellDefDirective",
+        "RowDetailDefContext",
+        "RowDetailDefDirective",
+        "TableColumn",
+        "TableComponent",
+        "TableSortChange"
+      ],
+      "vanillaPackage": "@africanies/africanies-ui",
+      "vanillaExports": [
+        "TableComponent"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:ui.table"
+      ]
+    },
+    {
+      "domain": "ui.pagination-stepper",
+      "angularPackage": "@africanies/africanies-ui",
+      "angularDeclarations": [
+        "PaginationComponent",
+        "StepDefContext",
+        "StepDefDirective",
+        "StepDefinition",
+        "StepperComponent"
+      ],
+      "vanillaPackage": "@africanies/africanies-ui",
+      "vanillaExports": [
+        "PaginationComponent",
+        "StepperComponent"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:ui.pagination-stepper"
+      ]
+    },
+    {
+      "domain": "ui.modules-image",
+      "angularPackage": "@africanies/africanies-ui",
+      "angularDeclarations": [
+        "AfricaniesActionsModule",
+        "AfricaniesFeedbackModule",
+        "AfricaniesFormsModule",
+        "AfricaniesInfoPopoverModule",
+        "AfricaniesNavigationModule",
+        "AfricaniesStepperModule",
+        "AfricaniesTableModule",
+        "AfricaniesTooltipModule",
+        "AsyncQueryStateModel",
+        "ImageComponent",
+        "ImageFit",
+        "ImageShape",
+        "PaginationMetaModel"
+      ],
+      "vanillaPackage": "@africanies/africanies-ui",
+      "vanillaExports": [
+        "AsyncQueryStateModel",
+        "ImageComponent",
+        "PaginationMetaModel"
+      ],
+      "status": "matched",
+      "evidence": [
+        "generated-export-diff",
+        "tests:ui.modules-image"
+      ]
+    }
+  ]
+}

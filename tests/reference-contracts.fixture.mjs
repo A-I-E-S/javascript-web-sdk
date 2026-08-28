@@ -23,6 +23,7 @@ export const MODE_COLOR_CLASSES = Object.freeze({
     primary: 'bg-export text-white border-transparent hover:bg-export-light',
     ghostPrimary: 'bg-transparent text-export border-transparent hover:bg-export-subtle dark:hover:bg-export/15',
     soft: 'bg-export-subtle dark:bg-export/15',
+    softSolid: 'bg-export-subtle dark:bg-[color-mix(in_srgb,#1cbd5d_15%,#212529)]',
     softHover: 'hover:bg-export-subtle dark:hover:bg-export/15'
   }),
   stn: Object.freeze({
@@ -33,6 +34,7 @@ export const MODE_COLOR_CLASSES = Object.freeze({
     primary: 'bg-import text-white border-transparent hover:bg-import-light',
     ghostPrimary: 'bg-transparent text-import border-transparent hover:bg-import-subtle dark:hover:bg-import/15',
     soft: 'bg-import-subtle dark:bg-import/15',
+    softSolid: 'bg-import-subtle dark:bg-[color-mix(in_srgb,#f08829_15%,#212529)]',
     softHover: 'hover:bg-import-subtle dark:hover:bg-import/15'
   })
 });

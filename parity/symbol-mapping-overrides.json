@@ -1,0 +1,88 @@
+{
+  "africanies-core:AFRICANIES_SDK_CONFIG": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["packages/core/src/runtime.ts:ANGULAR_ONLY_CORE_EXPORTS", "packages/core/PARITY_TRANSLATION.md"], "rationale": "The Angular InjectionToken is replaced by explicit ApiClient and SDK configuration." },
+  "africanies-core:AFRICANIES_HTTP_TOAST": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["packages/core/src/runtime.ts:ANGULAR_ONLY_CORE_EXPORTS", "packages/core/PARITY_TRANSLATION.md"], "rationale": "The Angular InjectionToken is replaced by explicit request and client configuration." },
+  "africanies-core:TOAST_HTTP_OPTIONS": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["packages/core/src/runtime.ts:ANGULAR_ONLY_CORE_EXPORTS", "packages/core/PARITY_TRANSLATION.md"], "rationale": "Angular HttpContext metadata is replaced by explicit Vanilla request options." },
+  "africanies-core:SHIPPING_MODE_OVERRIDE": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["packages/core/src/runtime.ts:ANGULAR_ONLY_CORE_EXPORTS", "packages/core/PARITY_TRANSLATION.md"], "rationale": "Angular HttpContext metadata is replaced by explicit shipping-mode request options." },
+  "africanies-core:MODAL_SERVICE": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["packages/core/src/runtime.ts:ANGULAR_ONLY_CORE_EXPORTS", "packages/core/PARITY_TRANSLATION.md"], "rationale": "The Angular InjectionToken is replaced by an explicitly constructed overlay service." },
+  "africanies-core:DRAWER_SERVICE": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["packages/core/src/runtime.ts:ANGULAR_ONLY_CORE_EXPORTS", "packages/core/PARITY_TRANSLATION.md"], "rationale": "The Angular InjectionToken is replaced by an explicitly constructed overlay service." },
+  "africanies-core:OVERLAY_ROUTE_CONFIGS": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["packages/core/src/runtime.ts:ANGULAR_ONLY_CORE_EXPORTS", "packages/core/PARITY_TRANSLATION.md"], "rationale": "The Angular multi-provider token is replaced by explicit route-overlay configuration." },
+  "africanies-core:authInterceptor": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["packages/core/src/runtime.ts:ANGULAR_ONLY_CORE_EXPORTS", "tests/core-angular-differential.test.mjs"], "rationale": "Angular functional interceptor behavior is integrated into the Vanilla ApiClient request pipeline." },
+  "africanies-core:shipmentModeInterceptor": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["packages/core/src/runtime.ts:ANGULAR_ONLY_CORE_EXPORTS", "tests/core-angular-differential.test.mjs"], "rationale": "Angular functional interceptor behavior is integrated into the Vanilla ApiClient request pipeline." },
+  "africanies-core:httpToastInterceptor": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["packages/core/src/runtime.ts:ANGULAR_ONLY_CORE_EXPORTS", "tests/core-angular-differential.test.mjs"], "rationale": "Angular functional interceptor behavior is integrated into the Vanilla ApiClient response pipeline." },
+  "africanies-ui:ActionMenuTriggerDirective": {
+    "status": "renamed",
+    "vanillaSymbol": "ActionMenuTriggerComponent",
+    "evidence": ["packages/ui/src/misc.ts", "tests/browser/sdk-runtime.spec.mjs"],
+    "rationale": "The Angular attribute/content-projection trigger is an explicit custom element that emits menu-toggle in Vanilla."
+  },
+  "africanies-ui:TooltipTriggerDirective": {
+    "status": "angular-only", "vanillaSymbol": null,
+    "evidence": ["canonical:libs/africanies-ui/src/lib/tooltip/tooltip-trigger.directive.ts", "packages/ui/src/misc.ts"],
+    "rationale": "The Angular projected-trigger query marker is replaced by the Vanilla tooltip slot contract."
+  },
+  "africanies-ui:InfoPopoverContentDirective": {
+    "status": "angular-only", "vanillaSymbol": null,
+    "evidence": ["canonical:libs/africanies-ui/src/lib/info-popover/info-popover-content.directive.ts", "packages/ui/src/misc.ts"],
+    "rationale": "Angular content-query metadata is replaced by native slot content."
+  },
+  "africanies-ui:InfoPopoverTriggerDirective": {
+    "status": "angular-only", "vanillaSymbol": null,
+    "evidence": ["canonical:libs/africanies-ui/src/lib/info-popover/info-popover-trigger.directive.ts", "packages/ui/src/misc.ts"],
+    "rationale": "Angular trigger-query metadata is replaced by native slot content."
+  },
+  "africanies-ui:TabDefDirective": {
+    "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/navigation/tabs", "packages/ui/src/navigation-data.ts"], "rationale": "Angular TemplateRef metadata is replaced by Vanilla configuration and slots."
+  },
+  "africanies-ui:StepDefDirective": {
+    "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/stepper", "packages/ui/src/navigation-data.ts"], "rationale": "Angular TemplateRef metadata is replaced by Vanilla configuration and slots."
+  },
+  "africanies-ui:CellDefDirective": {
+    "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/table", "packages/ui/src/navigation-data.ts"], "rationale": "Angular cell TemplateRef metadata is replaced by Vanilla render callbacks."
+  },
+  "africanies-ui:HeaderCellDefDirective": {
+    "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/table", "packages/ui/src/navigation-data.ts"], "rationale": "Angular header TemplateRef metadata is replaced by Vanilla render callbacks."
+  },
+  "africanies-ui:RowDetailDefDirective": {
+    "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/table", "packages/ui/src/navigation-data.ts"], "rationale": "Angular row-detail TemplateRef metadata is replaced by Vanilla render callbacks."
+  },
+  "africanies-ui:OverlayHeaderDirective": {
+    "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/overlay", "packages/ui/src/index.ts"], "rationale": "Angular content-query metadata is replaced by the header slot."
+  },
+  "africanies-ui:OverlayFooterDirective": {
+    "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/overlay", "packages/ui/src/index.ts"], "rationale": "Angular content-query metadata is replaced by the footer slot."
+  },
+  "africanies-ui:AppShellHeaderStartDirective": {
+    "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/layout", "packages/ui/src/misc.ts"], "rationale": "Angular content-query metadata is replaced by a named shell slot."
+  },
+  "africanies-ui:AppShellHeaderEndDirective": {
+    "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/layout", "packages/ui/src/misc.ts"], "rationale": "Angular content-query metadata is replaced by a named shell slot."
+  },
+  "africanies-ui:AppShellHeaderSlotDirective": {
+    "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/layout", "packages/ui/src/misc.ts"], "rationale": "Angular content-query metadata is replaced by a named shell slot."
+  },
+  "africanies-ui:AfricaniesActionsModule": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/modules", "packages/ui/src/index.ts"], "rationale": "Angular NgModule compatibility metadata has no framework-independent runtime meaning; defineAfricaniesElements performs registration." },
+  "africanies-ui:AfricaniesFeedbackModule": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/modules", "packages/ui/src/index.ts"], "rationale": "Angular NgModule compatibility metadata has no framework-independent runtime meaning; defineAfricaniesElements performs registration." },
+  "africanies-ui:AfricaniesFormsModule": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/modules", "packages/ui/src/index.ts"], "rationale": "Angular NgModule compatibility metadata has no framework-independent runtime meaning; defineAfricaniesElements performs registration." },
+  "africanies-ui:AfricaniesInfoPopoverModule": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/modules", "packages/ui/src/index.ts"], "rationale": "Angular NgModule compatibility metadata has no framework-independent runtime meaning; defineAfricaniesElements performs registration." },
+  "africanies-ui:AfricaniesNavigationModule": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/modules", "packages/ui/src/index.ts"], "rationale": "Angular NgModule compatibility metadata has no framework-independent runtime meaning; defineAfricaniesElements performs registration." },
+  "africanies-ui:AfricaniesStepperModule": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/modules", "packages/ui/src/index.ts"], "rationale": "Angular NgModule compatibility metadata has no framework-independent runtime meaning; defineAfricaniesElements performs registration." },
+  "africanies-ui:AfricaniesTableModule": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/modules", "packages/ui/src/index.ts"], "rationale": "Angular NgModule compatibility metadata has no framework-independent runtime meaning; defineAfricaniesElements performs registration." },
+  "africanies-ui:AfricaniesTooltipModule": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/modules", "packages/ui/src/index.ts"], "rationale": "Angular NgModule compatibility metadata has no framework-independent runtime meaning; defineAfricaniesElements performs registration." },
+  "africanies-ui:provideAfricaniesToasts": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/toast", "packages/ui/src/toast.ts"], "rationale": "Angular EnvironmentProviders registration is replaced by explicit Vanilla service construction." },
+  "africanies-ui:provideAfricaniesUiOverlays": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/overlay", "packages/ui/src/index.ts"], "rationale": "Angular EnvironmentProviders registration is replaced by explicit Vanilla service construction." },
+  "africanies-ui:provideGooglePlaces": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/forms/address-input", "packages/ui/src/external.ts"], "rationale": "Angular dependency-injection registration is replaced by explicit Vanilla configuration." },
+  "africanies-ui:OVERLAY_DATA": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/overlay", "packages/ui/src/index.ts"], "rationale": "The Angular InjectionToken is replaced by constructor and property data." },
+  "africanies-ui:GOOGLE_PLACES_CONFIG": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/forms/address-input", "packages/ui/src/external.ts"], "rationale": "The Angular InjectionToken is replaced by explicit service configuration." },
+  "africanies-ui:AFRICANIES_BRAND_LOGO_URL": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/brand", "packages/ui/src/misc.ts"], "rationale": "The Angular InjectionToken is replaced by component URL properties." },
+  "africanies-ui:AFRICANIES_BRAND_LOGO_MINI_URL": { "status": "angular-only", "vanillaSymbol": null, "evidence": ["canonical:libs/africanies-ui/src/lib/brand", "packages/ui/src/misc.ts"], "rationale": "The Angular InjectionToken is replaced by component URL properties." },
+  "africanies-core:withToast": { "status": "equivalent", "vanillaSymbol": "withToast", "evidence": ["packages/core/src/runtime.ts", "tests/final-sdk-gaps.test.mjs"], "rationale": "The Vanilla helper preserves the canonical toast request-option defaults and overrides.", "demonstration": { "route": "/components/toast", "selector": "[data-sdk-with-toast]" } },
+  "africanies-ui:FilterDrawerPanel": { "status": "equivalent", "vanillaSymbol": "FilterDrawerPanel", "evidence": ["packages/ui/src/misc.ts", "tests/final-sdk-gaps.test.mjs"], "rationale": "The public Vanilla panel alias resolves to the executable filter drawer component.", "demonstration": { "route": "/components/filters", "selector": "[data-sdk-filter-panel]" } },
+  "africanies-ui:ConfirmDialogComponent": { "status": "equivalent", "vanillaSymbol": "ConfirmDialogComponent", "evidence": ["packages/ui/src/overlay.ts", "tests/final-sdk-gaps.test.mjs"], "rationale": "The registered Vanilla confirm dialog implements the canonical confirmation surface.", "demonstration": { "route": "/components/overlays", "selector": "[data-sdk-overlay=\"confirm\"]" } },
+  "africanies-ui:resolveParentPathFromRootSnapshot": { "status": "equivalent", "vanillaSymbol": "resolveParentPathFromRootSnapshot", "evidence": ["packages/ui/src/navigation-data.ts", "tests/final-sdk-gaps.test.mjs"], "rationale": "The router-neutral helper preserves canonical parent-path traversal.", "demonstration": { "route": "/components/navigation/overview", "selector": "#sdk-parent-output" } },
+  "africanies-ui:AppShellContentHeaderComponent": { "status": "equivalent", "vanillaSymbol": "AppShellContentHeaderComponent", "evidence": ["packages/ui/src/misc.ts", "tests/final-sdk-gaps.test.mjs"], "rationale": "The Vanilla custom element implements the canonical app-shell content header.", "demonstration": { "route": "/components/navigation/overview", "selector": "africanies-app-shell-content-header" } },
+  "africanies-ui:AppShellHeaderComponent": { "status": "equivalent", "vanillaSymbol": "AppShellHeaderComponent", "evidence": ["packages/ui/src/misc.ts", "tests/final-sdk-gaps.test.mjs"], "rationale": "The Vanilla custom element implements the canonical app-shell header.", "demonstration": { "route": "/components/navigation/overview", "selector": "africanies-app-shell-header" } },
+  "africanies-ui:headerGreetingFirstName": { "status": "equivalent", "vanillaSymbol": "headerGreetingFirstName", "evidence": ["packages/ui/src/misc.ts", "tests/final-sdk-gaps.test.mjs"], "rationale": "The helper preserves canonical first-name normalization.", "demonstration": { "route": "/components/navigation/overview", "selector": "#sdk-greeting-output" } },
+  "africanies-ui:headerGreetingPeriod": { "status": "equivalent", "vanillaSymbol": "headerGreetingPeriod", "evidence": ["packages/ui/src/misc.ts", "tests/final-sdk-gaps.test.mjs"], "rationale": "The helper preserves canonical time-period boundaries.", "demonstration": { "route": "/components/navigation/overview", "selector": "#sdk-greeting-output" } },
+  "africanies-ui:pickHeaderGreeting": { "status": "equivalent", "vanillaSymbol": "pickHeaderGreeting", "evidence": ["packages/ui/src/misc.ts", "tests/final-sdk-gaps.test.mjs"], "rationale": "The helper preserves deterministic canonical greeting selection.", "demonstration": { "route": "/components/navigation/overview", "selector": "#sdk-greeting-output" } },
+  "africanies-ui:NotificationDrawerPanel": { "status": "equivalent", "vanillaSymbol": "NotificationDrawerPanel", "evidence": ["packages/ui/src/misc.ts", "tests/final-sdk-gaps.test.mjs"], "rationale": "The public Vanilla panel alias resolves to the executable notification drawer component.", "demonstration": { "route": "/overview", "selector": "[data-sdk-notification-panel]" } }
+}

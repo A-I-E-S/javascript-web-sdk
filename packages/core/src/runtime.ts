@@ -16,24 +16,32 @@ export function isLaravelValidationBag(value: unknown): value is Record<string, 
 export function mapLaravelValidationBag(value: unknown): Record<string, string[]> { return isLaravelValidationBag(value) ? Object.fromEntries(Object.entries(value).map(([key, messages]) => [key, [...messages]])) : {}; }
 export function fieldErrorsMap(value: unknown): Map<string, string[]> { return new Map(Object.entries(mapLaravelValidationBag(value))); }
 export function joinApiErrorMessages(value: unknown): string { return Object.values(mapLaravelValidationBag(value)).flat().join(' '); }
-export type ListFetchReason = 'initial' | 'refresh' | 'loadMore';
-export type ListFetchKind = 'replace' | 'append';
-export function listFetchKind(reason: ListFetchReason): ListFetchKind { return reason === 'loadMore' ? 'append' : 'replace'; }
-export function createAfricaniesQueryClientDefaults() { return { queries: { staleTime: 0, retry: 1, refetchOnWindowFocus: false } }; }
+export type ListFetchReason = 'initial' | 'focus' | 'refresh' | 'page' | 'mode';
+export type ListFetchKind = 'loading' | 'pagination' | 'refreshing';
+export function listFetchKind(options: { hasData: boolean; reason: ListFetchReason }): ListFetchKind {
+  if (!options.hasData || options.reason === 'mode') return 'loading';
+  return options.reason === 'page' ? 'pagination' : 'refreshing';
+}
+export interface AfricaniesQueryClientDefaults { queries: { staleTime: number; retry: number; refetchOnWindowFocus: boolean } }
+export function createAfricaniesQueryClientDefaults(): AfricaniesQueryClientDefaults { return { queries: { staleTime: 0, retry: 1, refetchOnWindowFocus: false } }; }
 export const provideAfricaniesQueryDefaults = createAfricaniesQueryClientDefaults;
 export const provideAfricaniesHttpClient = <T>(options: T): T => options;
 export const provideModeConfig = <T>(service: T): T => service;
 export const provideOverlayRoutes = <T>(config: T): T => config;
 export const COUNTRY_FLAG_CDN_BASE = 'https://flagcdn.com';
-export function countryFlagUrl(countryCode: string | null | undefined, options: { width?: number; format?: 'png' | 'svg' } = {}): string { const code = String(countryCode ?? '').trim().toLowerCase(); if (!/^[a-z]{2}$/.test(code)) return ''; const format = options.format ?? 'svg'; return format === 'svg' ? `${COUNTRY_FLAG_CDN_BASE}/${code}.svg` : `${COUNTRY_FLAG_CDN_BASE}/w${options.width ?? 40}/${code}.png`; }
+export type CountryFlagFormat = 'png' | 'svg';
+export interface CountryFlagUrlOptions { width?: number; format?: CountryFlagFormat }
+export interface CountrySelectOption { value: string; label: string; prefixText: string; prefixImageUrl: string }
+export function countryFlagUrl(countryCode: string | null | undefined, options: CountryFlagUrlOptions = {}): string { const code = String(countryCode ?? '').trim().toLowerCase(); if (!/^[a-z]{2}$/.test(code)) return ''; const format = options.format ?? 'svg'; return format === 'svg' ? `${COUNTRY_FLAG_CDN_BASE}/${code}.svg` : `${COUNTRY_FLAG_CDN_BASE}/w${options.width ?? 40}/${code}.png`; }
 export function mapCountrySelectOptions(rows: Array<Record<string, unknown>> | null | undefined) { return (rows ?? []).map(row => ({ value: String(row.id ?? ''), label: String(row.name ?? ''), prefixText: countryFlagEmoji(String(row.iso2 ?? '')), prefixImageUrl: countryFlagUrl(String(row.iso2 ?? '')) })); }
 function countryFlagEmoji(code: string): string { const normalized = code.trim().toUpperCase(); return /^[A-Z]{2}$/.test(normalized) ? [...normalized].map(letter => String.fromCodePoint(127397 + letter.charCodeAt(0))).join('') : ''; }
 export function resolveNotificationLinkForMode(link: string | null | undefined, mode: ShippingMode): string | null { if (!link) return null; return link.replace(/\{mode\}/g, mode); }
 export async function copyToClipboard(text: string, clipboard?: { writeText(value: string): Promise<void> }): Promise<boolean> { const target = clipboard ?? globalThis.navigator?.clipboard; if (!target?.writeText) return false; try { await target.writeText(text); return true; } catch { return false; } }
 export type CsvCellValue = string | number | boolean | null | undefined;
+export interface DownloadCsvOptions { filename: string; headers?: readonly CsvCellValue[]; rows: readonly (readonly CsvCellValue[])[]; bom?: boolean }
 export function csvCell(value: CsvCellValue): string { const text = value == null ? '' : String(value); return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text; }
-export function toCsvString(rows: readonly (readonly CsvCellValue[])[]): string { return `\uFEFF${rows.map(row => row.map(csvCell).join(',')).join('\r\n')}`; }
-export function downloadCsv(rows: readonly (readonly CsvCellValue[])[], options: { filename?: string; document?: Document; URL?: Pick<typeof URL, 'createObjectURL' | 'revokeObjectURL'> } = {}): void { const documentRef = options.document ?? globalThis.document; const urlApi = options.URL ?? globalThis.URL; if (!documentRef || !urlApi?.createObjectURL) throw new ReferenceError('A browser document and URL API are required'); const url = urlApi.createObjectURL(new Blob([toCsvString(rows)], { type: 'text/csv;charset=utf-8' })); const anchor = documentRef.createElement('a'); anchor.href = url; anchor.download = options.filename ?? 'export.csv'; anchor.click(); urlApi.revokeObjectURL(url); }
+export function toCsvString(options: Pick<DownloadCsvOptions, 'headers' | 'rows' | 'bom'>): string { const lines: string[] = []; if (options.headers?.length) lines.push(options.headers.map(csvCell).join(',')); for (const row of options.rows) lines.push(row.map(csvCell).join(',')); return `${options.bom === false ? '' : '\uFEFF'}${lines.length ? `${lines.join('\n')}\n` : ''}`; }
+export function downloadCsv(options: DownloadCsvOptions): boolean { const documentRef = globalThis.document; const urlApi = globalThis.URL; if (!documentRef || !urlApi?.createObjectURL) return false; const url = urlApi.createObjectURL(new Blob([toCsvString(options)], { type: 'text/csv;charset=utf-8' })); const anchor = documentRef.createElement('a'); anchor.href = url; anchor.download = options.filename; anchor.rel = 'noopener'; documentRef.body.appendChild(anchor); anchor.click(); documentRef.body.removeChild(anchor); urlApi.revokeObjectURL(url); return true; }
 
 /** Angular DI tokens/interceptors have no runtime equivalent; ApiClient middleware and explicit adapters replace them. */
 export const ANGULAR_ONLY_CORE_EXPORTS = Object.freeze(['AFRICANIES_SDK_CONFIG', 'AFRICANIES_HTTP_TOAST', 'TOAST_HTTP_OPTIONS', 'SHIPPING_MODE_OVERRIDE', 'MODAL_SERVICE', 'DRAWER_SERVICE', 'OVERLAY_ROUTE_CONFIGS', 'authInterceptor', 'shipmentModeInterceptor', 'httpToastInterceptor']);

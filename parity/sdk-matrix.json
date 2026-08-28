@@ -1,0 +1,18 @@
+{
+  "$schema": "./schemas/sdk-matrix.schema.json",
+  "domains": [
+    { "id": "models", "status": "verified", "acceptance": "Export and runtime differential fixtures pass." },
+    { "id": "storage", "status": "verified", "acceptance": "Keys, persistence and failure semantics match." },
+    { "id": "core-http", "status": "verified", "acceptance": "Path, headers, body, cache and error fixtures match." },
+    { "id": "theme", "status": "verified", "acceptance": "Precedence, persistence and root DOM state match." },
+    { "id": "icons", "status": "verified", "acceptance": "Canonical IDs render and the sprite loads once." },
+    { "id": "ui-actions", "status": "verified", "acceptance": "Names, defaults, native semantics and events match." },
+    { "id": "ui-feedback", "status": "verified", "acceptance": "All async and toast states match." },
+    { "id": "ui-forms", "status": "verified", "acceptance": "Value, validity, focus and async behavior match." },
+    { "id": "ui-overlays", "status": "verified", "acceptance": "Focus, dismissal, scroll and result lifecycle match." },
+    { "id": "ui-data-navigation", "status": "verified", "acceptance": "State, routing, sorting and pagination match." },
+    { "id": "angular-independence", "status": "verified", "acceptance": "ESM and global bundles load without Angular." },
+    { "id": "npm-cdn", "status": "verified", "acceptance": "Clean installs and exact versioned CDN URLs pass." }
+  ],
+  "allowedStatuses": ["verified", "gap", "unverified", "approved-divergence"]
+}

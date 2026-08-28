@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AFRICANIES generated Angular-to-Vanilla export diff",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "angularDeclarationHeads", "vanillaDeclarationHeads", "vanillaCustomElements", "matched", "missing", "vanillaOnly"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "angularDeclarationHeads": { "const": 485 },
+    "vanillaDeclarationHeads": { "type": "integer", "minimum": 0 },
+    "vanillaCustomElements": { "const": 56 },
+    "matched": { "type": "integer", "minimum": 0 },
+    "missing": { "type": "array" },
+    "vanillaOnly": { "type": "array", "items": { "type": "string" } }
+  }
+}

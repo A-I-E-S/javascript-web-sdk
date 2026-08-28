@@ -12,6 +12,15 @@
     "composite": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "paths": {
+      "@africanies/africanies-models": ["./packages/models/src/index.ts"],
+      "@africanies/africanies-storage": ["./packages/storage/src/index.ts"],
+      "@africanies/africanies-core": ["./packages/core/src/index.ts"],
+      "@africanies/africanies-theme": ["./packages/theme/src/index.ts"],
+      "@africanies/africanies-icons": ["./packages/icons/src/index.ts"],
+      "@africanies/africanies-ui": ["./packages/ui/src/index.ts"],
+      "@africanies/javascript-web-sdk": ["./packages/sdk/src/index.ts"]
+    }
   }
 }
