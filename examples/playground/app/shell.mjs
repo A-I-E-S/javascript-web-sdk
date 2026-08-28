@@ -117,7 +117,7 @@ const renderMobileItem = (item) => {
 };
 
 export function renderShell() {
-  return `<div class="relative flex min-h-screen bg-background-welcome text-ink dark:bg-ink-950 dark:text-white">
+  return `<div class="relative flex h-[100dvh] overflow-hidden bg-background-welcome text-ink dark:bg-ink-950 dark:text-white">
     <div id="mobile-navigation" class="fixed inset-0 z-40 hidden lg:hidden" hidden>
       <button id="mobile-navigation-backdrop" type="button" class="absolute inset-0 bg-ink/40" aria-label="Close navigation"></button>
       <aside class="relative flex h-full w-[15rem] flex-col overflow-hidden border-r border-border bg-white dark:border-white/10 dark:bg-ink" aria-label="Catalog">
@@ -129,7 +129,7 @@ export function renderShell() {
       </aside>
     </div>
 
-    <aside id="side-nav" class="relative z-20 hidden h-screen shrink-0 border-r border-border bg-white transition-[width] duration-200 ease-out lg:flex lg:flex-col dark:border-white/10 dark:bg-ink" aria-label="Catalog" data-collapsed="false" style="width:15rem">
+    <aside id="side-nav" class="sticky top-0 z-20 hidden h-[100dvh] shrink-0 border-r border-border bg-white transition-[width] duration-200 ease-out lg:flex lg:flex-col dark:border-white/10 dark:bg-ink" aria-label="Catalog" data-collapsed="false" style="width:15rem">
       <div class="pointer-events-none absolute inset-y-0 left-0 w-[3px] bg-export transition-colors" id="side-nav-accent" aria-hidden="true"></div>
       <div class="flex shrink-0 items-center gap-2 border-b border-border py-3 pl-4 pr-2 dark:border-white/10">
         <div class="min-w-0 flex-1" id="brand-full"><img src="/assets/africanies-ui/brand/africanies-logo.svg" alt="African Import Export Solutions" class="h-9 max-w-full object-contain object-left"></div>
@@ -142,7 +142,7 @@ export function renderShell() {
       </nav>
     </aside>
 
-    <div class="flex min-w-0 flex-1 flex-col">
+    <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
       <div class="flex shrink-0 items-center gap-2 border-b border-border px-3 py-2 dark:border-white/10 lg:hidden">
         <button id="mobile-navigation-toggle" type="button" class="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border text-ink transition-colors hover:bg-background-welcome dark:border-white/15 dark:text-white dark:hover:bg-white/10 lg:hidden" aria-label="Open navigation" aria-expanded="false">${icon('align-justify', 18)}</button>
         <img src="/assets/africanies-ui/brand/africanies-logo.svg" alt="African Import Export Solutions" class="h-7 w-auto object-contain">
@@ -209,9 +209,9 @@ export function renderShell() {
         <div id="header-accent" class="h-0.5 w-full bg-export transition-colors duration-300" aria-hidden="true"></div>
       </header>
 
-      <main class="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
-        <div class="mx-auto w-full max-w-[90rem]">
-          <div class="mb-6 flex flex-col gap-4">
+      <main id="content-scroll-region" class="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-4 py-3 sm:px-6 sm:py-2 lg:px-8 lg:py-6 xl:px-10">
+        <div class="mx-auto w-full max-w-[90rem] pb-10">
+          <div class="mb-4 flex flex-col gap-2 sm:mb-3">
             <div class="flex min-w-0 items-center gap-2 sm:gap-3">
               <a id="content-back" class="hidden size-8 shrink-0 items-center justify-center rounded-lg text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white" aria-label="Back">${icon('chevron-left', 18)}</a>
               <div id="breadcrumbs-wrap" class="min-w-0 flex-1"><div id="breadcrumbs" class="flex min-w-0 flex-wrap items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400"></div></div>
