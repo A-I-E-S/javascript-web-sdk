@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AFRICANIES SDK — CDN global</title>
+  </head>
+  <body>
+    <p id="status">Loading…</p>
+    <!-- Replace VERSION and INTEGRITY using the immutable release manifest. -->
+    <script src="https://cdn.jsdelivr.net/npm/@africanies/javascript-web-sdk@VERSION/dist/africanies-web-sdk.global.js"
+      integrity="INTEGRITY" crossorigin="anonymous"></script>
+    <script>
+      document.querySelector('#status').textContent = `AFRICANIES SDK ${Africanies.VERSION} loaded`;
+    </script>
+  </body>
+</html>
